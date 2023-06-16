@@ -29,6 +29,12 @@ import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.mapping.BasemapStyle;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.io.serial.FlowControl;
+import com.pi4j.io.serial.Parity;
+import com.pi4j.io.serial.Serial;
+import com.pi4j.io.serial.StopBits;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +43,21 @@ import java.util.concurrent.ExecutionException;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
 
+
+    private Context pi4j;
+    private Serial serial;
     //private MapView mapView;
     private static final String SERVICE_LAYER_URL =
         "https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer";
     private ServiceFeatureTable featureTable;
+
+
 
     public static void main(String[] args) {
 
@@ -66,6 +78,10 @@ public class App extends Application {
         Scene scene = new Scene(stackPane);
         stage.setScene(scene);
 
+        HBox hBox = new HBox();
+
+        stackPane.getChildren().add(hBox);
+
         Button button = new Button("press me");
         button.setOnAction(event -> {
             System.out.println("pressed!");
@@ -81,6 +97,53 @@ public class App extends Application {
 
         });
 
+        Button serialBtn = new Button("Start serial read");
+        serialBtn.setOnAction(event -> {
+            System.out.println("Starting serial...");
+
+            pi4j = Pi4J.newAutoContext();
+
+            serial = pi4j.create(Serial.newConfigBuilder(pi4j)
+                .baud(4800)
+                .dataBits_8()
+                .parity(Parity.NONE)
+                .stopBits(StopBits._1)
+                .flowControl(FlowControl.NONE)
+                .id("my-serial")
+                .device("SERIAL_ADDRESS")
+                .provider("pigpio-serial")
+                .build());
+            serial.open();
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Waiting till serial port is open");
+                    while (!serial.isOpen()) {
+                        try {
+                            Thread.sleep(250);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    //opened now!
+                    System.out.println("serial port is open!");
+
+                    // Start a thread to handle the incoming data from the serial port
+                    SerialReader serialReader = new SerialReader(serial);
+                    Thread serialReaderThread = new Thread(serialReader, "SerialReader");
+                    serialReaderThread.setDaemon(true);
+                    serialReaderThread.start();
+
+                }
+            };
+            runnable.run();
+
+        });
+
+        hBox.getChildren().add(serialBtn);
+
 
 
         // create a service geodatabase from the service layer url and load it
@@ -93,7 +156,8 @@ public class App extends Application {
             featureTable.loadAsync();
             featureTable.addDoneLoadingListener(()-> {
                 System.out.println("table loaded");
-                stackPane.getChildren().add(button);
+                hBox.getChildren().add(button);
+                //stackPane.getChildren().add(button);
             });
 
             // create a feature layer from table

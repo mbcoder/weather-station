@@ -20,5 +20,9 @@ module com.mycompany.app {
   requires javafx.graphics;
   requires org.slf4j.nop;
 
+  // Pi4J MODULES
+  requires com.pi4j;
+  requires com.pi4j.plugin.pigpio;
+
   exports com.mycompany.app;
 }
