@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-module com.mycompany.app {
+module com.mbcoder.iot.weatherstation {
   // modules required by the app
   requires com.esri.arcgisruntime;
   requires javafx.graphics;
@@ -23,6 +23,8 @@ module com.mycompany.app {
   // Pi4J MODULES
   requires com.pi4j;
   requires com.pi4j.plugin.pigpio;
+  requires com.pi4j.plugin.linuxfs;
+  requires jdk.unsupported;
 
-  exports com.mycompany.app;
+  exports com.mbcoder.iot.weatherstation;
 }
