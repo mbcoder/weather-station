@@ -41,7 +41,7 @@ public class Weather_logger extends Application {
     public void start(Stage stage) {
 
         int busNum = BMP280Declares.DEFAULT_BUS;
-        int address = BMP280Declares.DEFAULT_ADDRESS;
+        int address = 0x76; //BMP280Declares.DEFAULT_ADDRESS;
 
         // set the title and size of the stage and show it
         stage.setTitle("Weather station logger");
