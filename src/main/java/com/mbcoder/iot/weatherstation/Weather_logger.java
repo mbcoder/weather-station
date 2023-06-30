@@ -27,8 +27,11 @@ import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Weather_logger extends Application {
@@ -53,8 +56,8 @@ public class Weather_logger extends Application {
         stage.show();
 
         // create a JavaFX scene with a stack pane as the root node and add it to the scene
-        StackPane stackPane = new StackPane();
-        Scene scene = new Scene(stackPane);
+        BorderPane borderPane = new BorderPane();
+        Scene scene = new Scene(borderPane);
         stage.setScene(scene);
 
         HBox hBox = new HBox();
@@ -77,7 +80,16 @@ public class Weather_logger extends Application {
         });
         hBox.getChildren().add(btnLogWeather);
 
-        stackPane.getChildren().add(hBox);
+        borderPane.setTop(hBox);
+
+        VBox vBox = new VBox();
+        borderPane.setCenter(vBox);
+
+        Label labelTemp = new Label("Temperature 21c");
+        Label labelPressure = new Label("Pressure 1001Mb");
+        vBox.getChildren().addAll(labelTemp, labelPressure);
+
+
 
 
     }
