@@ -58,20 +58,26 @@ public class Weather_logger extends Application {
         stage.setScene(scene);
 
         HBox hBox = new HBox();
+        // button to connect to weather sensor
+        Button btnConnectSensor = new Button("Connect sensor");
+        btnConnectSensor.setOnAction(event -> {
+            // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
+            // which has a default address on bus 1 of 0x76
+            var pi4j = Pi4J.newContextBuilder().add(
+                LinuxFsI2CProvider.newInstance()).build();
+
+            weatherSensor = new BMP280Device(pi4j, busNum, address);
+        });
+        hBox.getChildren().add(btnConnectSensor);
+
         // button to start logging weather information (temperature and pressure)
         Button btnLogWeather = new Button("Log weather");
         btnLogWeather.setOnAction(event -> {
             logWeather();
         });
+        hBox.getChildren().add(btnLogWeather);
 
         stackPane.getChildren().add(hBox);
-
-        // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
-        // which has a default address on bus 1 of 0x76
-        var pi4j = Pi4J.newContextBuilder().add(
-            LinuxFsI2CProvider.newInstance()).build();
-
-        weatherSensor = new BMP280Device(pi4j, busNum, address);
 
 
     }
