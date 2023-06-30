@@ -454,6 +454,8 @@ public class BMP280Device implements BMP280Interface {
     public void initSensor() {
       System.out.println("enter: initSensor");
         this.resetSensor();
+
+      /*
         // read 0xD0 validate data equal 0x58
         int id = this.i2c.readRegister(BMP280Declares.chipId);
       System.out.println("i2c chi[ id " + id);
@@ -461,6 +463,8 @@ public class BMP280Device implements BMP280Interface {
             System.out.println("Incorrect chip ID read");
             System.exit(42);
         }
+
+       */
       System.out.println("exit: initSensor");
     }
 
