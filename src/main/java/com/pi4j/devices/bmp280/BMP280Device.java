@@ -92,7 +92,7 @@ public class BMP280Device implements BMP280Interface {
 
     protected Context pi4j = null;
 
-    protected Console console = null;
+    //protected Console console = null;
 
     protected int busNum = BMP280Declares.DEFAULT_BUS;
     protected int address = BMP280Declares.DEFAULT_ADDRESS;
@@ -110,20 +110,7 @@ public class BMP280Device implements BMP280Interface {
      * @param address Device address
      * @param traceLevel for Logger
      */
-    public BMP280Device(Context pi4j, Console console, int bus, int address, String traceLevel) {
-        super();
-        this.pi4j = pi4j;
-        this.address = address;
-        this.busNum = bus;
-        this.console = console;
-        this.traceLevel = traceLevel;
-        // "trace", "debug", "info", "warn", "error" or "off"). If not specified, defaults to "info"
-        //  must fully qualify logger as others exist and the slf4 code will use the first it
-        //  encounters if using the defaultLogLevel
-        System.setProperty("org.slf4j.simpleLogger.log." + BMP280Device.class.getName(), this.traceLevel);
 
-        this.createI2cDevice(); // will set start this.i2c
-    }
 
 
     /**
@@ -135,8 +122,8 @@ public class BMP280Device implements BMP280Interface {
         this.pi4j = pi4j;
         this.address = address;
         this.busNum = bus;
-        this.console = console;
-        this.traceLevel = "info";  // we were passed the Logger to use
+        //this.console = console;
+        //this.traceLevel = "info";  // we were passed the Logger to use
         this.createI2cDevice(); // will set start this.i2c
     }
     /**
