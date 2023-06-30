@@ -34,12 +34,7 @@ package com.pi4j.devices.bmp280;
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
-import com.pi4j.util.Console;
 
-
-/* For I2C operation CSB pin must be connected to 3.3 V.
-
- */
 
 /**
  * Implementation of BMP280  Temperature/Pressure Sensor, using I2C communication.
@@ -69,22 +64,6 @@ public class BMP280Device implements BMP280Interface {
     public static final String I2C_PROVIDER_ID = ID + "-i2c";
 
 
-    private static final int t1 = 0;
-    private static final int t2 = 1;
-    private static final int t3 = 2;
-    private static final int p1 = 3;
-    private static final int p2 = 4;
-    private static final int p3 = 5;
-    private static final int p4 = 6;
-    private static final int p5 = 7;
-    private static final int p6 = 8;
-    private static final int p7 = 9;
-    private static final int p8 = 10;
-    private static final int p9 = 11;
-
-    //private final String traceLevel;
-
-
     // local/internal I2C reference for communication with hardware chip
     protected I2C i2c = null;
 
@@ -92,24 +71,10 @@ public class BMP280Device implements BMP280Interface {
 
     protected Context pi4j = null;
 
-    //protected Console console = null;
 
     protected int busNum = BMP280Declares.DEFAULT_BUS;
     protected int address = BMP280Declares.DEFAULT_ADDRESS;
 
-
-    /**
-     * @param console Context instance used accross application
-     * @param bus     Pi bus
-     * @param address Device address
-     */
-
-    /**
-     * @param console Context instance used accross application
-     * @param bus     Pi bus
-     * @param address Device address
-     * @param traceLevel for Logger
-     */
 
 
 
@@ -122,25 +87,9 @@ public class BMP280Device implements BMP280Interface {
         this.pi4j = pi4j;
         this.address = address;
         this.busNum = bus;
-        //this.console = console;
-        //this.traceLevel = "info";  // we were passed the Logger to use
         this.createI2cDevice(); // will set start this.i2c
     }
-    /**
-     * @param device Set i2c state
-     */
-    public void setI2c(I2C device) {
-        this.i2c = device;
-        this.address = device.device();
-        this.busNum = device.bus();
-    }
 
-    /**
-     * @return i2c state
-     */
-    public I2C getI2c() {
-        return (this.i2c);
-    }
 
 
     /**
@@ -148,7 +97,7 @@ public class BMP280Device implements BMP280Interface {
      * a BMP280 device instance
      */
     private void createI2cDevice() {
-      System.out.println("Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address);
+      //System.out.println("Enter:createI2cDevice   bus  " + this.busNum + "  address " + this.address);
 
         var address = this.address;
         var bus = this.busNum;
@@ -164,7 +113,7 @@ public class BMP280Device implements BMP280Interface {
                 .build();
         this.config = i2cDeviceConfig;
         this.i2c = this.pi4j.create(i2cDeviceConfig);
-      System.out.println("Exit:createI2cDevice  ");
+      //System.out.println("Exit:createI2cDevice  ");
     }
 
 
@@ -172,8 +121,8 @@ public class BMP280Device implements BMP280Interface {
      * @return string containing a desription of the attached I2C path
      */
     public String i2cDetail() {
-      System.out.println("enter: i2cDetail");
-      System.out.println("exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device()));
+      //System.out.println("enter: i2cDetail");
+      //System.out.println("exit: i2cDetail  " + (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device()));
       return (this.i2c.toString() + " bus : " + this.config.bus() + "  address : " + this.config.device());
     }
 
@@ -184,8 +133,8 @@ public class BMP280Device implements BMP280Interface {
      */
     private int castOffSignByte(byte read) {
 
-      System.out.println("Enter: castOffSignByte byte " + read);
-      System.out.println("Exit: castOffSignByte  " + ((int) read & 0Xff));
+      //System.out.println("Enter: castOffSignByte byte " + read);
+      //System.out.println("Exit: castOffSignByte  " + ((int) read & 0Xff));
       return ((int) read & 0Xff);
     }
 
@@ -194,11 +143,11 @@ public class BMP280Device implements BMP280Interface {
      * @return 16 bit signed
      */
     private int signedInt(byte[] read) {
-      System.out.println("Enter: signedInt byte[] " + read.toString());
+      //System.out.println("Enter: signedInt byte[] " + read.toString());
         int temp = 0;
         temp = (read[0] & 0xff);
         temp += (((long) read[1]) << 8);
-      System.out.println("Exit: signedInt  " + temp);
+      //System.out.println("Exit: signedInt  " + temp);
         return (temp);
     }
 
@@ -207,11 +156,11 @@ public class BMP280Device implements BMP280Interface {
      * @return 64 bit unsigned value
      */
     private long castOffSignInt(byte[] read) {
-      System.out.println("Enter: castOffSignInt byte[] " + read.toString());
+      //System.out.println("Enter: castOffSignInt byte[] " + read.toString());
         long temp = 0;
         temp = ((long) read[0] & 0xff);
         temp += (((long) read[1] & 0xff)) << 8;
-      System.out.println("Exit: castOffSignInt  " + temp);
+      //System.out.println("Exit: castOffSignInt  " + temp);
         return (temp);
     }
 
@@ -230,7 +179,7 @@ public class BMP280Device implements BMP280Interface {
      * @return double[2],  temperature in C and pressure in Pa
      */
     public double[] readBMP280() {
-      System.out.println("enter: readBMP280");
+      //System.out.println("enter: readBMP280");
 
         double[] rval = new double[2];
         // set forced mode to leave sleep ode state and initiate measurements.
@@ -315,15 +264,6 @@ public class BMP280Device implements BMP280Interface {
         this.i2c.readRegister(BMP280Declares.press_msb, buff);
 
 
-        int p_msb = castOffSignByte(buff[0]);
-        int p_lsb = castOffSignByte(buff[1]);
-        int p_xlsb = castOffSignByte(buff[2]);
-
-        int t_msb = castOffSignByte(buff[3]);
-        int t_lsb = castOffSignByte(buff[4]);
-        int t_xlsb = castOffSignByte(buff[5]);
-
-
         long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
 
         long adc_P = (long) ((buff[0] & 0xFF) << 12) + (long) ((buff[1] & 0xFF) << 4) + (long) (buff[2] & 0xFF);
@@ -357,7 +297,7 @@ public class BMP280Device implements BMP280Interface {
             P = P + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
         rval[1] = P;
-      System.out.println("exit: readBMP280  T " + rval[0] + "  P " + rval[1]);
+      //System.out.println("exit: readBMP280  T " + rval[0] + "  P " + rval[1]);
 
         return rval;   // “5123” equals 51.23 DegC.
     }
@@ -367,9 +307,9 @@ public class BMP280Device implements BMP280Interface {
      * @return Temperature centigrade
      */
     public double temperatureC() {
-      System.out.println("enter: temperatureC");
+      //System.out.println("enter: temperatureC");
         double[] rval = this.readBMP280();
-      System.out.println("exit: temperatureC  " + rval[0]);
+      //System.out.println("exit: temperatureC  " + rval[0]);
         return rval[0];
     }
 
@@ -377,9 +317,9 @@ public class BMP280Device implements BMP280Interface {
      * @return Temperature fahrenheit
      */
     public double temperatureF() {
-      System.out.println("enter: temperatureF");
+      //System.out.println("enter: temperatureF");
         double fTemp = this.temperatureC() * 1.8 + 32;
-      System.out.println("exit: temperatureF  " + fTemp);
+      //System.out.println("exit: temperatureF  " + fTemp);
         return fTemp;
     }
 
@@ -387,9 +327,9 @@ public class BMP280Device implements BMP280Interface {
      * @return Pressure in Pa units
      */
     public double pressurePa() {
-      System.out.println("enter: pressurePa");
+      //System.out.println("enter: pressurePa");
         double[] rval = this.readBMP280();
-      System.out.println("exit: pressurePa  " + rval[1]);
+      //System.out.println("exit: pressurePa  " + rval[1]);
         return rval[1];
     }
 
@@ -397,10 +337,10 @@ public class BMP280Device implements BMP280Interface {
      * @return Pressure in millBar
      */
     public double pressureMb() {
-      System.out.println("enter: pressureMb");
+      //System.out.println("enter: pressureMb");
         double[] rval = this.readBMP280();
         double mbar = rval[1] / 100;
-      System.out.println("exit: pressureMb  " + mbar);
+      //System.out.println("exit: pressureMb  " + mbar);
         return (mbar);
     }
 
@@ -408,10 +348,10 @@ public class BMP280Device implements BMP280Interface {
      * @return Pressure in inches mercury
      */
     public double pressureIn() {
-      System.out.println("enter: pressureIn");
+      //System.out.println("enter: pressureIn");
         double[] rval = this.readBMP280();
         double inches = (rval[1] / 3386);
-      System.out.println("exit: pressureIn  " + inches);
+      //System.out.println("exit: pressureIn  " + inches);
         return (inches);
     }
 
@@ -420,7 +360,7 @@ public class BMP280Device implements BMP280Interface {
      * to allow the chip to complete the reset
      */
     public void resetSensor() {
-      System.out.println("enter: resetSensor");
+      //System.out.println("enter: resetSensor");
         this.i2c.writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
 
         // Next delay for 100 ms to provide chip time to perform reset
@@ -429,7 +369,7 @@ public class BMP280Device implements BMP280Interface {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-      System.out.println("exit: resetSensor");
+      //System.out.println("exit: resetSensor");
     }
 
 
@@ -439,7 +379,7 @@ public class BMP280Device implements BMP280Interface {
      * ID failure will force a program exit.
      */
     public void initSensor() {
-      System.out.println("enter: initSensor");
+      //System.out.println("enter: initSensor");
         this.resetSensor();
 
       /*
@@ -452,7 +392,7 @@ public class BMP280Device implements BMP280Interface {
         }
 
        */
-      System.out.println("exit: initSensor");
+      //System.out.println("exit: initSensor");
     }
 
 
@@ -461,8 +401,8 @@ public class BMP280Device implements BMP280Interface {
      */
     public I2CConfig config() {
 
-      System.out.println("enter: config");
-      System.out.println("exit: config  " + this.config.toString());
+      //System.out.println("enter: config");
+      //System.out.println("exit: config  " + this.config.toString());
         return this.config;
     }
 
