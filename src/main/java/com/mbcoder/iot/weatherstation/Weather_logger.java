@@ -26,12 +26,15 @@ import com.pi4j.io.serial.Serial;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Weather_logger extends Application {
 
+
+    private BMP280Device weatherSensor;
     public static void main(String[] args) {
 
         Application.launch(args);
@@ -55,36 +58,27 @@ public class Weather_logger extends Application {
         stage.setScene(scene);
 
         HBox hBox = new HBox();
+        // button to start logging weather information (temperature and pressure)
+        Button btnLogWeather = new Button("Log weather");
+        btnLogWeather.setOnAction(event -> {
+            logWeather();
+        });
 
         stackPane.getChildren().add(hBox);
 
+        // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
+        // which has a default address on bus 1 of 0x76
         var pi4j = Pi4J.newContextBuilder().add(
             LinuxFsI2CProvider.newInstance()).build();
 
-        var bmpDev = new BMP280Device(pi4j, busNum, address);
-        bmpDev.initSensor();
-
-        System.out.println("  Dev I2C detail    " + bmpDev.i2cDetail());
-        System.out.println("  Setup ----------------------------------------------------------");
+        weatherSensor = new BMP280Device(pi4j, busNum, address);
 
 
-        System.out.println("  I2C detail : " + bmpDev.i2cDetail());
+    }
 
-        double reading1 = bmpDev.temperatureC();
-        System.out.println(" Temperatue C = " + reading1);
-
-        double reading2 = bmpDev.temperatureF();
-        System.out.println(" Temperatue F = " + reading2);
-
-        double press1 = bmpDev.pressurePa();
-        System.out.println(" Pressure Pa = " + press1);
-
-        double press2 = bmpDev.pressureIn();
-        System.out.println(" Pressure InHg = " + press2);
-
-        double press3 = bmpDev.pressureMb();
-        System.out.println(" Pressure mb = " + press3);
-
+    private void logWeather() {
+        System.out.println("pressure " + weatherSensor.pressureMb());
+        System.out.println("temperature " + weatherSensor.temperatureC());
     }
 
     /**
