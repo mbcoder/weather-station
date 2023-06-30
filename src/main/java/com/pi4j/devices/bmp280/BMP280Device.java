@@ -82,7 +82,7 @@ public class BMP280Device implements BMP280Interface {
     private static final int p8 = 10;
     private static final int p9 = 11;
 
-    private final String traceLevel;
+    //private final String traceLevel;
 
 
     // local/internal I2C reference for communication with hardware chip
