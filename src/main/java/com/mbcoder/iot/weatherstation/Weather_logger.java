@@ -20,19 +20,34 @@ import com.pi4j.Pi4J;
 import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
+import java.text.DecimalFormat;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Weather_logger extends Application {
 
 
     private BMP280Device weatherSensor;
+    private String weatherStationID = ""; // this is the unique weather station id
+    private CheckBox chkSimulated;
+    private int sampleFrequency = 10000; // time between sensor samples in milliseconds
+    private Timer loggingTimer;
+    private Label labelTemp;
+    private Label labelPressure;
+    private static final DecimalFormat formatter = new DecimalFormat("0.00");
+
     public static void main(String[] args) {
 
         Application.launch(args);
@@ -42,7 +57,8 @@ public class Weather_logger extends Application {
     public void start(Stage stage) {
 
         int busNum = BMP280Declares.DEFAULT_BUS;
-        int address = 0x76; //BMP280Declares.DEFAULT_ADDRESS;
+        int address = 0x76; // i2c address if bmp280 sensor
+
 
         // set the title and size of the stage and show it
         stage.setTitle("Weather station logger");
@@ -56,6 +72,12 @@ public class Weather_logger extends Application {
         stage.setScene(scene);
 
         HBox hBox = new HBox();
+
+        // temp checkbox for simulated feed for running on laptop (default on for now)
+        chkSimulated = new CheckBox("Simulated");
+        chkSimulated.setSelected(true);
+        hBox.getChildren().add(chkSimulated);
+
         // button to connect to weather sensor
         Button btnConnectSensor = new Button("Connect sensor");
         btnConnectSensor.setOnAction(event -> {
@@ -71,7 +93,7 @@ public class Weather_logger extends Application {
         // button to start logging weather information (temperature and pressure)
         Button btnLogWeather = new Button("Log weather");
         btnLogWeather.setOnAction(event -> {
-            logWeather();
+            startWeatherLogging();
         });
         hBox.getChildren().add(btnLogWeather);
 
@@ -80,18 +102,49 @@ public class Weather_logger extends Application {
         VBox vBox = new VBox();
         borderPane.setCenter(vBox);
 
-        Label labelTemp = new Label("Temperature 21c");
-        Label labelPressure = new Label("Pressure 1001Mb");
+        labelTemp = new Label("...");
+        labelTemp.setFont(new Font("Arial", 48));
+        labelPressure = new Label("...");
+        labelPressure.setFont(new Font("Arial", 48));
         vBox.getChildren().addAll(labelTemp, labelPressure);
-
-
-
-
     }
 
-    private void logWeather() {
-        System.out.println("pressure " + weatherSensor.pressureMb());
-        System.out.println("temperature " + weatherSensor.temperatureC());
+    private void startWeatherLogging() {
+        loggingTimer = new Timer();
+
+        loggingTimer.schedule( new TimerTask() {
+            public void run() {
+                double currentTemperature;
+                double currentPresssureMb;
+
+                System.out.println("logging");
+
+                // is it a simulated feed?
+                if (chkSimulated.isSelected()) {
+                    // make up a random temperature and pressure
+                    Random random = new Random();
+                    currentTemperature = random.nextDouble() * 10;
+                    currentPresssureMb = 990 + random.nextDouble() * 10;
+
+
+                } else {
+                    // read from the sensor
+                    currentTemperature = weatherSensor.temperatureC();
+                    currentPresssureMb = weatherSensor.pressureMb();
+                }
+
+                // update the display on JavaFX thread
+                Platform.runLater(()-> updateDisplay(currentTemperature, currentPresssureMb));
+
+
+
+            }
+        }, 1000, sampleFrequency);
+    }
+
+    private void updateDisplay(double temperature, double pressure) {
+        labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
+        labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
     }
 
     /**
@@ -99,5 +152,6 @@ public class Weather_logger extends Application {
      */
     @Override
     public void stop() {
+        if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
     }
 }
