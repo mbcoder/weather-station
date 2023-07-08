@@ -21,12 +21,17 @@ import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.chart.Chart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -47,6 +52,16 @@ public class Weather_logger extends Application {
     private Label labelTemp;
     private Label labelPressure;
     private static final DecimalFormat formatter = new DecimalFormat("0.00");
+    private NumberAxis xAxisTemp;
+    private NumberAxis yAxisTemp;
+    private XYChart.Series tempSeries;
+    private NumberAxis xAxisPressure;
+    private NumberAxis yAxisPressure;
+    private XYChart.Series pressureSeries;
+    private int maxReadings = 500;
+    private int readingCount = 0;
+    private boolean firstReading = true;
+
 
     public static void main(String[] args) {
 
@@ -59,11 +74,10 @@ public class Weather_logger extends Application {
         int busNum = BMP280Declares.DEFAULT_BUS;
         int address = 0x76; // i2c address if bmp280 sensor
 
-
         // set the title and size of the stage and show it
         stage.setTitle("Weather station logger");
         stage.setWidth(800);
-        stage.setHeight(700);
+        stage.setHeight(500);
         stage.show();
 
         // create a JavaFX scene with a stack pane as the root node and add it to the scene
@@ -102,11 +116,41 @@ public class Weather_logger extends Application {
         VBox vBox = new VBox();
         borderPane.setCenter(vBox);
 
+        // crude labels for showing latest data
         labelTemp = new Label("...");
         labelTemp.setFont(new Font("Arial", 48));
         labelPressure = new Label("...");
         labelPressure.setFont(new Font("Arial", 48));
-        vBox.getChildren().addAll(labelTemp, labelPressure);
+
+        // defining X axis for temp
+        xAxisTemp = new NumberAxis(0, 0, 0);
+        xAxisTemp.setLabel("Observation");
+
+        // defining Y axis for temp
+        yAxisTemp = new NumberAxis(0, 0, 0);
+        yAxisTemp.setLabel("Temp");
+
+        // create line chart and data for temperature
+        LineChart chartTemperature = new LineChart(xAxisTemp, yAxisTemp);
+        tempSeries = new XYChart.Series();
+        tempSeries.setName("Temperature history");
+        chartTemperature.getData().add(tempSeries);
+
+        // defining X axes for pressure
+        xAxisPressure = new NumberAxis(0, 0, 0);
+        xAxisPressure.setLabel("Observation");
+
+        // defining Y aces for pressure
+        yAxisPressure = new NumberAxis(0, 0, 0);
+        yAxisPressure.setLabel("Pressure");
+
+        // create line chart and data for pressure
+        LineChart chartPressure = new LineChart(xAxisPressure, yAxisPressure);
+        pressureSeries = new XYChart.Series();
+        pressureSeries.setName("Pressure history");
+        chartPressure.getData().add(pressureSeries);
+
+        vBox.getChildren().addAll(labelTemp, labelPressure, chartTemperature, chartPressure);
     }
 
     private void startWeatherLogging() {
@@ -115,7 +159,7 @@ public class Weather_logger extends Application {
         loggingTimer.schedule( new TimerTask() {
             public void run() {
                 double currentTemperature;
-                double currentPresssureMb;
+                double currentPressureMb;
 
                 System.out.println("logging");
 
@@ -123,21 +167,16 @@ public class Weather_logger extends Application {
                 if (chkSimulated.isSelected()) {
                     // make up a random temperature and pressure
                     Random random = new Random();
-                    currentTemperature = random.nextDouble() * 10;
-                    currentPresssureMb = 990 + random.nextDouble() * 10;
-
-
+                    currentTemperature = (random.nextDouble() * 2) + 10;
+                    currentPressureMb = 990 + random.nextDouble() * 10;
                 } else {
                     // read from the sensor
                     currentTemperature = weatherSensor.temperatureC();
-                    currentPresssureMb = weatherSensor.pressureMb();
+                    currentPressureMb = weatherSensor.pressureMb();
                 }
 
                 // update the display on JavaFX thread
-                Platform.runLater(()-> updateDisplay(currentTemperature, currentPresssureMb));
-
-
-
+                Platform.runLater(()-> updateDisplay(currentTemperature, currentPressureMb));
             }
         }, 1000, sampleFrequency);
     }
@@ -145,6 +184,42 @@ public class Weather_logger extends Application {
     private void updateDisplay(double temperature, double pressure) {
         labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
         labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
+
+        // set the y axes on the first reading
+        if (firstReading) {
+            firstReading = false;
+            yAxisTemp.setLowerBound(temperature - 1);
+            yAxisTemp.setUpperBound(temperature + 1);
+            yAxisPressure.setLowerBound(pressure - 10);
+            yAxisPressure.setUpperBound(pressure + 10);
+        }
+
+        // add data to series for temp and pressure
+        tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
+        pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
+
+        if (readingCount < maxReadings) {
+            // extent the x axes
+            xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+            xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+        } else {
+            // prune the oldest data and move along one step
+            tempSeries.getData().remove(0);
+            pressureSeries.getData().remove(0);
+            xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
+            xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+            xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
+            xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+        }
+
+        // adjust y axes bounds to match data
+        if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
+        if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
+
+        if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
+        if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
+
+        readingCount++;
     }
 
     /**
