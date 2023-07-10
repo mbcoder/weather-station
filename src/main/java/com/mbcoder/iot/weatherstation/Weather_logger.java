@@ -45,8 +45,8 @@ public class Weather_logger extends Application {
     private BMP280Device weatherSensor;
     private String weatherStationID = ""; // this is the unique weather station id
     private CheckBox chkSimulated;
-    private int sampleFrequency = 10000; // time between sensor samples in milliseconds
-    private int graphUpdateFrequency = 900000; // 4 updates per hour
+    private int sampleFrequency = 1000; // 10000; // time between sensor samples in milliseconds
+    private int graphUpdateFrequency = 4000; //900000; // 4 updates per hour
     private Timer loggingTimer; // timer for reading sensors and logging data
     private Timer graphTimer; // timer for flag graph updates
     private boolean updateGraph = false; // flag set true if its time to update the graph
