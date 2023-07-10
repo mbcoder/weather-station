@@ -47,8 +47,11 @@ public class Weather_logger extends Application {
     private BMP280Device weatherSensor;
     private String weatherStationID = ""; // this is the unique weather station id
     private CheckBox chkSimulated;
-    private int sampleFrequency = 10000; // time between sensor samples in milliseconds
-    private Timer loggingTimer;
+    private int sampleFrequency = 1000; // 10000; // time between sensor samples in milliseconds
+    private int graphUpdateFrequency = 4000; // 900000; // 4 updates per hour
+    private Timer loggingTimer; // timer for reading sensors and logging data
+    private Timer graphTimer; // timer for flag graph updates
+    private boolean updateGraph = false; // flag set true if its time to update the graph
     private Label labelTemp;
     private Label labelPressure;
     private static final DecimalFormat formatter = new DecimalFormat("0.00");
@@ -58,7 +61,7 @@ public class Weather_logger extends Application {
     private NumberAxis xAxisPressure;
     private NumberAxis yAxisPressure;
     private XYChart.Series pressureSeries;
-    private int maxReadings = 500;
+    private int maxReadings = 100; // number of reading shown in the graph,  With updates every 15 minutes, this allows for just over a day
     private int readingCount = 0;
     private boolean firstReading = true;
 
@@ -154,6 +157,7 @@ public class Weather_logger extends Application {
     }
 
     private void startWeatherLogging() {
+        // timer for reading sensor and logging results
         loggingTimer = new Timer();
 
         loggingTimer.schedule( new TimerTask() {
@@ -179,47 +183,64 @@ public class Weather_logger extends Application {
                 Platform.runLater(()-> updateDisplay(currentTemperature, currentPressureMb));
             }
         }, 1000, sampleFrequency);
+
+        // timer for updating the graph.  this works by setting a flag which is picked up by the logging timer.
+        graphTimer = new Timer();
+        graphTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateGraph = true;
+            }
+        }, 1000, graphUpdateFrequency);
     }
 
     private void updateDisplay(double temperature, double pressure) {
+        // update the temperature and pressure
         labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
         labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
 
-        // set the y axes on the first reading
-        if (firstReading) {
-            firstReading = false;
-            yAxisTemp.setLowerBound(temperature - 1);
-            yAxisTemp.setUpperBound(temperature + 1);
-            yAxisPressure.setLowerBound(pressure - 10);
-            yAxisPressure.setUpperBound(pressure + 10);
+        // update the graph if its time - happens less frequently
+        if (updateGraph) {
+
+            // set the y axes on the first reading
+            if (firstReading) {
+                firstReading = false;
+                yAxisTemp.setLowerBound(temperature - 1);
+                yAxisTemp.setUpperBound(temperature + 1);
+                yAxisPressure.setLowerBound(pressure - 10);
+                yAxisPressure.setUpperBound(pressure + 10);
+            }
+
+            // add data to series for temp and pressure
+            tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
+            pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
+
+            if (readingCount < maxReadings) {
+                // extent the x axes
+                xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+                xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+            } else {
+                // prune the oldest data and move along one step
+                tempSeries.getData().remove(0);
+                pressureSeries.getData().remove(0);
+                xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
+                xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+                xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
+                xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+            }
+
+            // adjust y axes bounds to match data
+            if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
+            if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
+
+            if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
+            if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
+
+            readingCount++;
+
+            // reset the flag for graph update
+            updateGraph = false;
         }
-
-        // add data to series for temp and pressure
-        tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
-        pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
-
-        if (readingCount < maxReadings) {
-            // extent the x axes
-            xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-            xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-        } else {
-            // prune the oldest data and move along one step
-            tempSeries.getData().remove(0);
-            pressureSeries.getData().remove(0);
-            xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
-            xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-            xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
-            xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-        }
-
-        // adjust y axes bounds to match data
-        if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
-        if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
-
-        if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
-        if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
-
-        readingCount++;
     }
 
     /**
@@ -228,5 +249,6 @@ public class Weather_logger extends Application {
     @Override
     public void stop() {
         if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
+        if (graphTimer != null) graphTimer.cancel(); // same for graph timer
     }
 }
