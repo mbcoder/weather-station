@@ -190,6 +190,7 @@ public class Weather_logger extends Application {
             @Override
             public void run() {
                 updateGraph = true;
+                System.out.println("graph update time!");
             }
         }, 1000, graphUpdateFrequency);
     }
