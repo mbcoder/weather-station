@@ -170,6 +170,9 @@ public class Weather_logger extends Application {
     }
 
     private void startWeatherLogging() {
+        // instance of sensor
+        sensor = new BMP280();
+
         // timer for reading sensor and logging results
         loggingTimer = new Timer();
 
