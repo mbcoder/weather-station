@@ -188,6 +188,7 @@ public class Weather_logger extends Application {
                     currentPressureMb = 990 + random.nextDouble() * 10;
                 } else {
                     // read from the sensor
+                    sensor.readLatestValues();
                     //currentTemperature = weatherSensor.temperatureC();
                     currentTemperature = sensor.getTemperature();
                     //currentPressureMb = weatherSensor.pressureMb();
