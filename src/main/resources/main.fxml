@@ -39,12 +39,18 @@
         </top>
 
     <left>
-        <Label fx:id="labelTemp" text="..." styleClass="panel-upper"/>
-        <Gauge fx:id="tempGauge" />
-
+        <HBox styleClass="panel-region">
+            <Label fx:id="labelTemp" text="..." alignment="CENTER" />
+            <Gauge fx:id="tempGauge" skinType="LCD" lcdFont="DIGITAL" lcdDesign="RED_DARKRED" />
+        </HBox>
     </left>
     <right>
-        <Label fx:id="labelPressure" text="..." styleClass="panel-upper"/>
+        <HBox>
+            <Label fx:id="labelPressure" text="..."/>
+            <Gauge fx:id="pressureGauge" skinType="MODERN" animated="true"  />
+        </HBox>
+
+
 
     </right>
 

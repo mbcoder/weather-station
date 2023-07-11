@@ -52,6 +52,7 @@ public class Controller {
   private int readingCount = 0;
   private boolean firstReading = true;
   @FXML private Gauge tempGauge;
+  @FXML private Gauge pressureGauge;
 
   @FXML
   private NumberAxis xAxisTemp;
@@ -68,7 +69,6 @@ public class Controller {
   @FXML
   private XYChart.Series<Number, Number> pressureSeries;
 
-  @FXML Gauge gauge;
 
   private BMP280Device weatherSensor;
 
@@ -84,13 +84,7 @@ public class Controller {
       tempChart.getData().add(tempSeries);
       pressureChart.getData().add(pressureSeries);
 
-      gauge = new Gauge(Gauge.SkinType.DIGITAL);
 
-      tempGauge = GaugeBuilder.create()
-        .borderPaint(Color.AQUAMARINE)
-        .skinType(Gauge.SkinType.SIMPLE_DIGITAL)
-        .animated(true)
-        .build();
 
 
 
@@ -121,6 +115,7 @@ public class Controller {
   @FXML
   private void startWeatherLogging() {
     // timer for reading sensor and logging results
+
     loggingTimer = new Timer();
 
     // 10000; // time between sensor samples in milliseconds
@@ -165,6 +160,8 @@ public class Controller {
   private void updateDisplay(double temperature, double pressure) {
     // update the temperature and pressure
     tempGauge.setValue(temperature);
+    pressureGauge.setValue(pressure);
+    pressureGauge.setMaxValue(1100);
     labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
     labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
 

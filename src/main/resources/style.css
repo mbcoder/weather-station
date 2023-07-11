@@ -5,6 +5,15 @@ VBox {
     -fx-alignment: top-left;
     -fx-text-fill: white;
     -fx-max-height: 300;
+}
+
+VBox .label {
+    -fx-text-fill: white;
+}
+
+.gauge VBox {
+    -fx-background-color: white;
+
 
 }
 
