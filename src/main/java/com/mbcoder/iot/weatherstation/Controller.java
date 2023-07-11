@@ -5,6 +5,8 @@ import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
+import eu.hansolo.medusa.LcdDesign;
+import eu.hansolo.medusa.Section;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -16,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 import com.pi4j.Pi4J;
 
@@ -53,6 +56,8 @@ public class Controller {
   private boolean firstReading = true;
   @FXML private Gauge tempGauge;
   @FXML private Gauge pressureGauge;
+  @FXML private Gauge tempGaugeDial;
+  @FXML private Gauge gauge17;
 
   @FXML
   private NumberAxis xAxisTemp;
@@ -68,6 +73,8 @@ public class Controller {
   private Timer graphTimer;
   @FXML
   private XYChart.Series<Number, Number> pressureSeries;
+  @FXML
+  private VBox windowsVBox;
 
 
   private BMP280Device weatherSensor;
@@ -81,8 +88,53 @@ public class Controller {
       tempSeries.setName("Temperature history");
       pressureSeries.setName("Pressure history");
 
-      tempChart.getData().add(tempSeries);
-      pressureChart.getData().add(pressureSeries);
+      weatherStationID = "RaspPi";
+
+      tempGaugeDial = GaugeBuilder.create()
+        .skinType(Gauge.SkinType.DASHBOARD)
+        .animated(true)
+        .title("Dashboard")
+        .unit("\u00B0C")
+        .maxValue(25)
+        .markersVisible(false)
+        .barColor(Color.CRIMSON)
+        .valueColor(Color.BLACK)
+        .titleColor(Color.WHITE)
+        .unitColor(Color.WHITE)
+        .shadowsEnabled(true)
+        .gradientBarEnabled(true)
+        .gradientBarStops(new Stop(0.00, Color.LIGHTBLUE),
+          new Stop(0.3, Color.LIGHTGREEN),
+          new Stop(0.6, Color.YELLOW),
+          new Stop(1.00, Color.ORANGE))
+        .build();
+
+      windowsVBox.getChildren().add(tempGaugeDial);
+
+
+      gauge17 = GaugeBuilder.create()
+        .skinType(Gauge.SkinType.LCD)
+//        .animated(true)
+        .title("Temperature")
+        .subTitle(weatherStationID)
+        .unit("\u00B0C")
+//        .lcdDesign(LcdDesign.BLUE_LIGHTBLUE2)
+//        .thresholdVisible(true)
+//        .threshold(25)
+        .build();
+
+      gauge17.setOldValueVisible(false);
+      gauge17.setMaxMeasuredValueVisible(false);
+      gauge17.setMinMeasuredValueVisible(false);
+
+      windowsVBox.getChildren().add(gauge17);
+
+
+
+
+
+//      tempChart.getData().add(tempSeries);
+//      pressureChart.getData().add(pressureSeries);
 
 
 
@@ -131,7 +183,7 @@ public class Controller {
         if (chkSimulated.isSelected()) {
           // make up a random temperature and pressure
           Random random = new Random();
-          currentTemperature = (random.nextDouble() * 2) + 10;
+          currentTemperature = (random.nextDouble() * 10) + 10;
           currentPressureMb = 990 + random.nextDouble() * 10;
         } else {
           // read from the sensor
@@ -158,12 +210,18 @@ public class Controller {
   }
 
   private void updateDisplay(double temperature, double pressure) {
+
+
     // update the temperature and pressure
+    tempGaugeDial.setValue(temperature);
+    gauge17.setValue(temperature);
     tempGauge.setValue(temperature);
-    pressureGauge.setValue(pressure);
-    pressureGauge.setMaxValue(1100);
+//    pressureGauge.setValue(pressure);
+
+
     labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
     labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
+
 
     // update the graph if its time - happens less frequently
     if (updateGraph) {
@@ -171,38 +229,38 @@ public class Controller {
       // set the y axes on the first reading
       if (firstReading) {
         firstReading = false;
-        yAxisTemp.setLowerBound(temperature - 1);
-        yAxisTemp.setUpperBound(temperature + 1);
-        yAxisPressure.setLowerBound(pressure - 10);
-        yAxisPressure.setUpperBound(pressure + 10);
+//        yAxisTemp.setLowerBound(temperature - 1);
+//        yAxisTemp.setUpperBound(temperature + 1);
+//        yAxisPressure.setLowerBound(pressure - 10);
+//        yAxisPressure.setUpperBound(pressure + 10);
       }
 
       // add data to series for temp and pressure
-      tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
-      pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
+//      tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
+//      pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
 
       // number of reading shown in the graph,  With updates every 15 minutes, this allows for just over a day
       int maxReadings = 100;
-      if (readingCount < maxReadings) {
-        // extent the x axes
-        xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-        xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-      } else {
-        // prune the oldest data and move along one step
-        tempSeries.getData().remove(0);
-        pressureSeries.getData().remove(0);
-        xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
-        xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-        xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
-        xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-      }
+//      if (readingCount < maxReadings) {
+//        // extent the x axes
+//        xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+//        xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+//      } else {
+//        // prune the oldest data and move along one step
+//        tempSeries.getData().remove(0);
+//        pressureSeries.getData().remove(0);
+//        xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
+//        xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
+//        xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
+//        xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
+//      }
 
       // adjust y axes bounds to match data
-      if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
-      if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
-
-      if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
-      if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
+//      if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
+//      if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
+//
+//      if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
+//      if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
 
       readingCount++;
 

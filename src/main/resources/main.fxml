@@ -24,58 +24,59 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<!--<StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"-->
-<!--        stylesheets="@style.css" VBox.vgrow="ALWAYS">-->
+
 
 <?import eu.hansolo.medusa.Gauge?>
-<BorderPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
-            stylesheets="@style.css" VBox.vgrow="ALWAYS" maxHeight="Infinity">
-        <top>
-            <HBox fx:id="hBox" styleClass="panel-region" alignment="CENTER" spacing="5">
-                <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>
-                <Button fx:id="btnConnectSensor" onAction="#handleSensorConnectButton" text="Connect sensor"/>
-                <Button fx:id="btnLogWeather" onAction="#startWeatherLogging" text="Log weather"/>
-            </HBox>
-        </top>
-
-    <left>
-        <HBox styleClass="panel-region">
-            <Label fx:id="labelTemp" text="..." alignment="CENTER" />
-            <Gauge fx:id="tempGauge" skinType="LCD" lcdFont="DIGITAL" lcdDesign="RED_DARKRED" />
+<StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
+             VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity">
+    <VBox fx:id="windowsVBox">
+        <!--        <top>-->
+        <HBox fx:id="hBox"  alignment="CENTER" spacing="5">
+            <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>
+            <Button fx:id="btnConnectSensor" onAction="#handleSensorConnectButton" text="Connect sensor"/>
+            <Button fx:id="btnLogWeather" onAction="#startWeatherLogging" text="Log weather"/>
         </HBox>
-    </left>
-    <right>
+        <!--        </top>-->
+
+        <!--    <left>-->
+        <HBox >
+            <Label fx:id="labelTemp" text="..." alignment="CENTER" />
+<!--            <Gauge fx:id="tempGauge" skinType="LCD" lcdFont="DIGITAL" lcdDesign="RED_DARKRED" title="Temperature" unit="°C"/>-->
+        </HBox>
+        <!--    </left>-->
+        <!--    <right>-->
         <HBox>
             <Label fx:id="labelPressure" text="..."/>
-            <Gauge fx:id="pressureGauge" skinType="MODERN" animated="true"  />
+<!--            <Gauge fx:id="pressureGauge" skinType="LCD" title="Pressure" unit="mB" lcdCrystalEnabled="true" lcdVisible="true" maxMeasuredValue="2000" maxValue="2000" maxWidth="Infinity"-->
+<!--                   lcdDesign="BLUE_LIGHTBLUE" lcdFont="DIGITAL" sectionIconsVisible="true" sectionsVisible="true"/>-->
         </HBox>
+        <!--    </right>-->
 
+        <!--        <bottom>-->
 
+    </VBox>
 
-    </right>
-
-        <bottom>
             <!--Controls box-->
-            <VBox fx:id="vBox" StackPane.alignment="BOTTOM_CENTER" maxWidth="Infinity" maxHeight="Infinity" styleClass="panel-region">
-                <LineChart fx:id="tempChart" title="Profile" animated="false">
-                    <xAxis>
-                        <NumberAxis fx:id="xAxisTemp" side="BOTTOM" label="Observation" tickUnit="0"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis fx:id="yAxisTemp" side="LEFT" label="Temp (C)" tickUnit="0"/>
-                    </yAxis>
-                </LineChart>
-                <LineChart fx:id="pressureChart" title="Profile" animated="false">
-                    <xAxis>
-                        <NumberAxis fx:id="xAxisPressure" side="BOTTOM" label="Observation" tickUnit="0"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis fx:id="yAxisPressure" side="LEFT" label="Pressure" tickUnit="0"/>
-                    </yAxis>
-                </LineChart>
-            </VBox>
-        </bottom>
-    </BorderPane>
+<!--            <VBox fx:id="vBox" StackPane.alignment="BOTTOM_CENTER" maxWidth="Infinity" maxHeight="Infinity" styleClass="panel-region">-->
+<!--                <LineChart fx:id="tempChart" title="Profile" animated="false">-->
+<!--                    <xAxis>-->
+<!--                        <NumberAxis fx:id="xAxisTemp" side="BOTTOM" label="Observation" tickUnit="0"/>-->
+<!--                    </xAxis>-->
+<!--                    <yAxis>-->
+<!--                        <NumberAxis fx:id="yAxisTemp" side="LEFT" label="Temp (C)" tickUnit="0"/>-->
+<!--                    </yAxis>-->
+<!--                </LineChart>-->
+<!--                <LineChart fx:id="pressureChart" title="Profile" animated="false">-->
+<!--                    <xAxis>-->
+<!--                        <NumberAxis fx:id="xAxisPressure" side="BOTTOM" label="Observation" tickUnit="0"/>-->
+<!--                    </xAxis>-->
+<!--                    <yAxis>-->
+<!--                        <NumberAxis fx:id="yAxisPressure" side="LEFT" label="Pressure" tickUnit="0"/>-->
+<!--                    </yAxis>-->
+<!--                </LineChart>-->
+<!--            </VBox>-->
+<!--        </bottom>-->
+    </StackPane>
 
 <!--</StackPane>-->
 
