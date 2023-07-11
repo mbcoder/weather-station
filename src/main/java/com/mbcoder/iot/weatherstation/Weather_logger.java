@@ -42,7 +42,7 @@ import javafx.stage.Stage;
 public class Weather_logger extends Application {
 
 
-    private BMP280Device weatherSensor;
+    //private BMP280Device weatherSensor;
     private String weatherStationID = ""; // this is the unique weather station id
     private CheckBox chkSimulated;
     private int sampleFrequency = 1000; // 10000; // time between sensor samples in milliseconds
@@ -62,6 +62,7 @@ public class Weather_logger extends Application {
     private int maxReadings = 100; // number of reading shown in the graph,  With updates every 15 minutes, this allows for just over a day
     private int readingCount = 0;
     private boolean firstReading = true;
+    BMP280 sensor;
 
 
     public static void main(String[] args) {
@@ -107,7 +108,7 @@ public class Weather_logger extends Application {
 
              */
 
-            BMP280 sensor = new BMP280();
+            sensor = new BMP280();
             sensor.readLatestValues();
 
             System.out.println("temperature " + sensor.getTemperature());
@@ -187,8 +188,10 @@ public class Weather_logger extends Application {
                     currentPressureMb = 990 + random.nextDouble() * 10;
                 } else {
                     // read from the sensor
-                    currentTemperature = weatherSensor.temperatureC();
-                    currentPressureMb = weatherSensor.pressureMb();
+                    //currentTemperature = weatherSensor.temperatureC();
+                    currentTemperature = sensor.getTemperature();
+                    //currentPressureMb = weatherSensor.pressureMb();
+                    currentPressureMb = sensor.getPressure();
                 }
 
                 // update the display on JavaFX thread
