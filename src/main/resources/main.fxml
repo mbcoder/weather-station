@@ -27,8 +27,9 @@
 <!--<StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"-->
 <!--        stylesheets="@style.css" VBox.vgrow="ALWAYS">-->
 
-    <BorderPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
-                stylesheets="@style.css" VBox.vgrow="ALWAYS" maxHeight="Infinity">
+<?import eu.hansolo.medusa.Gauge?>
+<BorderPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
+            stylesheets="@style.css" VBox.vgrow="ALWAYS" maxHeight="Infinity">
         <top>
             <HBox fx:id="hBox" styleClass="panel-region" alignment="CENTER" spacing="5">
                 <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>
@@ -39,6 +40,7 @@
 
     <left>
         <Label fx:id="labelTemp" text="..." styleClass="panel-upper"/>
+        <Gauge fx:id="tempGauge" />
 
     </left>
     <right>

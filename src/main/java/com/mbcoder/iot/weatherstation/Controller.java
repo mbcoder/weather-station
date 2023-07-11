@@ -3,6 +3,8 @@ package com.mbcoder.iot.weatherstation;
 import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
+import eu.hansolo.medusa.Gauge;
+import eu.hansolo.medusa.GaugeBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -13,6 +15,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import com.pi4j.Pi4J;
 
@@ -21,8 +24,6 @@ import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static javafx.scene.chart.XYChart.Series;
 
 public class Controller {
 
@@ -50,6 +51,7 @@ public class Controller {
 
   private int readingCount = 0;
   private boolean firstReading = true;
+  @FXML private Gauge tempGauge;
 
   @FXML
   private NumberAxis xAxisTemp;
@@ -59,13 +61,14 @@ public class Controller {
   private NumberAxis xAxisPressure;
   @FXML
   private NumberAxis yAxisPressure;
-
   @FXML
   private XYChart.Series<Number, Number> tempSeries;
   private Timer loggingTimer;
   private Timer graphTimer;
   @FXML
   private XYChart.Series<Number, Number> pressureSeries;
+
+  @FXML Gauge gauge;
 
   private BMP280Device weatherSensor;
 
@@ -80,6 +83,16 @@ public class Controller {
 
       tempChart.getData().add(tempSeries);
       pressureChart.getData().add(pressureSeries);
+
+      gauge = new Gauge(Gauge.SkinType.DIGITAL);
+
+      tempGauge = GaugeBuilder.create()
+        .borderPaint(Color.AQUAMARINE)
+        .skinType(Gauge.SkinType.SIMPLE_DIGITAL)
+        .animated(true)
+        .build();
+
+
 
 
       // crude labels for showing latest data
@@ -151,6 +164,7 @@ public class Controller {
 
   private void updateDisplay(double temperature, double pressure) {
     // update the temperature and pressure
+    tempGauge.setValue(temperature);
     labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
     labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
 

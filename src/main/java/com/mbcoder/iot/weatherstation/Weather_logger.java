@@ -17,6 +17,7 @@
 package com.mbcoder.iot.weatherstation;
 
 import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,24 +26,24 @@ import javafx.stage.Stage;
 
 public class Weather_logger extends Application {
 
-    private static Controller controller;
+  private static Controller controller;
 
-    @Override
-    public void start(Stage stage) throws IOException {
+  @Override
+  public void start(Stage stage) throws IOException {
 
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
-      Parent root = loader.load();
-      controller = loader.getController();
-      Scene scene = new Scene(root);
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
+    Parent root = loader.load();
+    controller = loader.getController();
+    Scene scene = new Scene(root);
 
-      // set the title and size of the stage and show it
-        stage.setTitle("Weather station logger");
-        stage.setWidth(800);
-        stage.setHeight(500);
-        stage.setScene(scene);
-        stage.show();
+    // set the title and size of the stage and show it
+    stage.setTitle("Weather station logger");
+    stage.setWidth(800);
+    stage.setHeight(500);
+    stage.setScene(scene);
+    stage.show();
 
-    }
+  }
 
   /**
    * Opens and runs application.
@@ -53,13 +54,13 @@ public class Weather_logger extends Application {
     Application.launch(args);
   }
 
-    /**
-     * Stops and releases all resources used in application.
-     */
-    @Override
-    public void stop() {
+  /**
+   * Stops and releases all resources used in application.
+   */
+  @Override
+  public void stop() {
 
-      controller.terminate();
+    controller.terminate();
 
-    }
+  }
 }

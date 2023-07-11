@@ -22,6 +22,8 @@ module com.mbcoder.iot.weatherstation {
   requires javafx.fxml;
   requires java.xml;
 
+  requires eu.hansolo.medusa;
+
   // make all @FXML annotated objects reflectively accessible to the javafx.fxml module
   opens com.mbcoder.iot.weatherstation to javafx.fxml;
 
