@@ -109,7 +109,8 @@ public class Weather_logger extends Application {
              */
 
             sensor = new BMP280();
-            sensor.readLatestValues();
+
+            sensor.startReadingSensor();
 
             System.out.println("temperature " + sensor.getTemperature());
             System.out.println("pressure " + sensor.getPressure());
@@ -172,6 +173,7 @@ public class Weather_logger extends Application {
     private void startWeatherLogging() {
         // instance of sensor
         sensor = new BMP280();
+        sensor.startReadingSensor();
 
         // timer for reading sensor and logging results
         loggingTimer = new Timer();
@@ -191,7 +193,7 @@ public class Weather_logger extends Application {
                     currentPressureMb = 990 + random.nextDouble() * 10;
                 } else {
                     // read from the sensor
-                    sensor.readLatestValues();
+                    sensor.startReadingSensor();
                     //currentTemperature = weatherSensor.temperatureC();
                     currentTemperature = sensor.getTemperature();
                     //currentPressureMb = weatherSensor.pressureMb();
@@ -270,5 +272,6 @@ public class Weather_logger extends Application {
     public void stop() {
         if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
         if (graphTimer != null) graphTimer.cancel(); // same for graph timer
+        if (sensor != null) sensor.stopReadingSensor();
     }
 }
