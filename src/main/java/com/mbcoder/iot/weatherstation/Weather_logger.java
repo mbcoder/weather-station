@@ -98,10 +98,24 @@ public class Weather_logger extends Application {
         btnConnectSensor.setOnAction(event -> {
             // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
             // which has a default address on bus 1 of 0x76
+
+            /*
             var pi4j = Pi4J.newContextBuilder().add(
                 LinuxFsI2CProvider.newInstance()).build();
 
             weatherSensor = new BMP280Device(pi4j, busNum, address);
+
+             */
+
+            BMP280 sensor = new BMP280();
+            sensor.readLatestValues();
+
+            System.out.println("temperature " + sensor.getTemperature());
+            System.out.println("pressure " + sensor.getPressure());
+            System.out.println("humidity " + sensor.getHumidity());
+
+
+
         });
         hBox.getChildren().add(btnConnectSensor);
 
