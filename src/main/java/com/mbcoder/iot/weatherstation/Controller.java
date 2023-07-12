@@ -3,8 +3,10 @@ package com.mbcoder.iot.weatherstation;
 import com.pi4j.devices.bmp280.BMP280Declares;
 import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
+import eu.hansolo.medusa.FGauge;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
+import eu.hansolo.medusa.GaugeDesign;
 import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -58,6 +60,7 @@ public class Controller {
   @FXML private Gauge tempGaugeDial;
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
+  @FXML private FGauge barometerFGauge;
 
   @FXML
   private NumberAxis xAxisTemp;
@@ -111,10 +114,12 @@ public class Controller {
           new Stop(1.00, Color.ORANGE))
         .build();
 
+
+
+
       barometerGauge = GaugeBuilder.create()
         .skinType(Gauge.SkinType.SECTION)
-        .needleColor(Color.SILVER)
-        .averageColor(Color.SADDLEBROWN)
+        .needleColor(Color.ROSYBROWN)
         .minValue(940)
         .maxValue(1060)
         .animated(true)
@@ -124,48 +129,53 @@ public class Controller {
             .start(1040)
             .stop(1060)
             .text("VERY DRY")
-            .color(Color.rgb(223, 223, 223))
-            .highlightColor(Color.rgb(197, 223, 0))
+            .color(Color.ANTIQUEWHITE)
+            .highlightColor(Color.FLORALWHITE)
             .textColor(Gauge.DARK_COLOR)
             .build(),
           SectionBuilder.create()
             .start(1020)
             .stop(1040)
             .text("FAIR")
-            .color(Color.rgb(223, 223, 223))
-            .highlightColor(Color.rgb(251, 245, 0))
+            .color(Color.ANTIQUEWHITE)
+            .highlightColor(Color.FLORALWHITE)
             .textColor(Gauge.DARK_COLOR)
             .build(),
           SectionBuilder.create()
             .start(1000)
             .stop(1020)
             .text("CHANGE")
-            .color(Color.rgb(223, 223, 223))
-            .highlightColor(Color.rgb(247, 206, 0))
+            .color(Color.ANTIQUEWHITE)
+            .highlightColor(Color.FLORALWHITE)
             .textColor(Gauge.DARK_COLOR)
             .build(),
           SectionBuilder.create()
             .start(970)
             .stop(1000)
             .text("RAIN")
-            .color(Color.rgb(223, 223, 223))
-            .highlightColor(Color.rgb(227, 124, 1))
+            .color(Color.ANTIQUEWHITE)
+            .highlightColor(Color.FLORALWHITE)
             .textColor(Gauge.DARK_COLOR)
             .build(),
           SectionBuilder.create()
             .start(940)
             .stop(970)
             .text("STORMY")
-            .color(Color.rgb(223, 223, 223))
-            .highlightColor(Color.rgb(223, 49, 23))
+            .color(Color.ANTIQUEWHITE)
+            .highlightColor(Color.FLORALWHITE)
             .textColor(Gauge.DARK_COLOR)
             .build())
         .build();
 
+      barometerFGauge = new FGauge (barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
+
+
 //      windowsVBox.getChildren().add(tempGaugeDial);
 
       gridPane.add(tempGaugeDial, 0, 1);
-      gridPane.add(barometerGauge, 1, 0);
+      gridPane.add(barometerFGauge, 1, 0);
+
+
 
       digitalTempGauge = GaugeBuilder.create()
         .skinType(Gauge.SkinType.LCD)
@@ -182,7 +192,6 @@ public class Controller {
       digitalTempGauge.setMaxMeasuredValueVisible(false);
       digitalTempGauge.setMinMeasuredValueVisible(false);
 
-//      windowsVBox.getChildren().add(gauge17);
 
       gridPane.add(digitalTempGauge, 1, 1);
 
