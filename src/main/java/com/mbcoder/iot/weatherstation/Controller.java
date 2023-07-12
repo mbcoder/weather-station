@@ -5,8 +5,7 @@ import com.pi4j.devices.bmp280.BMP280Device;
 import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
-import eu.hansolo.medusa.LcdDesign;
-import eu.hansolo.medusa.Section;
+import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -15,11 +14,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
-import javafx.scene.text.Font;
 import com.pi4j.Pi4J;
 
 
@@ -57,7 +56,8 @@ public class Controller {
   @FXML private Gauge tempGauge;
   @FXML private Gauge pressureGauge;
   @FXML private Gauge tempGaugeDial;
-  @FXML private Gauge gauge17;
+  @FXML private Gauge digitalTempGauge;
+  @FXML private Gauge barometerGauge;
 
   @FXML
   private NumberAxis xAxisTemp;
@@ -75,6 +75,8 @@ public class Controller {
   private XYChart.Series<Number, Number> pressureSeries;
   @FXML
   private VBox windowsVBox;
+  @FXML
+  private GridPane gridPane;
 
 
   private BMP280Device weatherSensor;
@@ -93,13 +95,13 @@ public class Controller {
       tempGaugeDial = GaugeBuilder.create()
         .skinType(Gauge.SkinType.DASHBOARD)
         .animated(true)
-        .title("Dashboard")
+        .title("Temperature \u00B0C ")
         .unit("\u00B0C")
         .maxValue(25)
         .markersVisible(false)
         .barColor(Color.CRIMSON)
         .valueColor(Color.BLACK)
-        .titleColor(Color.WHITE)
+        .titleColor(Color.BLACK)
         .unitColor(Color.WHITE)
         .shadowsEnabled(true)
         .gradientBarEnabled(true)
@@ -109,10 +111,63 @@ public class Controller {
           new Stop(1.00, Color.ORANGE))
         .build();
 
-      windowsVBox.getChildren().add(tempGaugeDial);
+      barometerGauge = GaugeBuilder.create()
+        .skinType(Gauge.SkinType.SECTION)
+        .needleColor(Color.SILVER)
+        .averageColor(Color.SADDLEBROWN)
+        .minValue(940)
+        .maxValue(1060)
+        .animated(true)
+        .highlightSections(true)
+        .sections(
+          SectionBuilder.create()
+            .start(1040)
+            .stop(1060)
+            .text("VERY DRY")
+            .color(Color.rgb(223, 223, 223))
+            .highlightColor(Color.rgb(197, 223, 0))
+            .textColor(Gauge.DARK_COLOR)
+            .build(),
+          SectionBuilder.create()
+            .start(1020)
+            .stop(1040)
+            .text("FAIR")
+            .color(Color.rgb(223, 223, 223))
+            .highlightColor(Color.rgb(251, 245, 0))
+            .textColor(Gauge.DARK_COLOR)
+            .build(),
+          SectionBuilder.create()
+            .start(1000)
+            .stop(1020)
+            .text("CHANGE")
+            .color(Color.rgb(223, 223, 223))
+            .highlightColor(Color.rgb(247, 206, 0))
+            .textColor(Gauge.DARK_COLOR)
+            .build(),
+          SectionBuilder.create()
+            .start(970)
+            .stop(1000)
+            .text("RAIN")
+            .color(Color.rgb(223, 223, 223))
+            .highlightColor(Color.rgb(227, 124, 1))
+            .textColor(Gauge.DARK_COLOR)
+            .build(),
+          SectionBuilder.create()
+            .start(940)
+            .stop(970)
+            .text("STORMY")
+            .color(Color.rgb(223, 223, 223))
+            .highlightColor(Color.rgb(223, 49, 23))
+            .textColor(Gauge.DARK_COLOR)
+            .build())
+        .build();
 
+//      windowsVBox.getChildren().add(tempGaugeDial);
 
-      gauge17 = GaugeBuilder.create()
+      gridPane.add(tempGaugeDial, 0, 1);
+      gridPane.add(barometerGauge, 1, 0);
+
+      digitalTempGauge = GaugeBuilder.create()
         .skinType(Gauge.SkinType.LCD)
 //        .animated(true)
         .title("Temperature")
@@ -123,12 +178,13 @@ public class Controller {
 //        .threshold(25)
         .build();
 
-      gauge17.setOldValueVisible(false);
-      gauge17.setMaxMeasuredValueVisible(false);
-      gauge17.setMinMeasuredValueVisible(false);
+      digitalTempGauge.setOldValueVisible(false);
+      digitalTempGauge.setMaxMeasuredValueVisible(false);
+      digitalTempGauge.setMinMeasuredValueVisible(false);
 
-      windowsVBox.getChildren().add(gauge17);
+//      windowsVBox.getChildren().add(gauge17);
 
+      gridPane.add(digitalTempGauge, 1, 1);
 
 
 
@@ -184,7 +240,7 @@ public class Controller {
           // make up a random temperature and pressure
           Random random = new Random();
           currentTemperature = (random.nextDouble() * 10) + 10;
-          currentPressureMb = 990 + random.nextDouble() * 10;
+          currentPressureMb = 990 + random.nextDouble() * 15;
         } else {
           // read from the sensor
           currentTemperature = weatherSensor.temperatureC();
@@ -214,13 +270,14 @@ public class Controller {
 
     // update the temperature and pressure
     tempGaugeDial.setValue(temperature);
-    gauge17.setValue(temperature);
-    tempGauge.setValue(temperature);
+    digitalTempGauge.setValue(temperature);
+//    tempGauge.setValue(temperature);
+    barometerGauge.setValue(pressure);
 //    pressureGauge.setValue(pressure);
 
 
-    labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
-    labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
+//    labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
+//    labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
 
 
     // update the graph if its time - happens less frequently
