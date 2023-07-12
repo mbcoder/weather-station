@@ -14,7 +14,7 @@ public class BMP280 {
   public void startReadingSensor() {
 
     Runnable runnable= () -> {
-      ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
+      ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py");
       try {
         process = processBuilder.start();
 
