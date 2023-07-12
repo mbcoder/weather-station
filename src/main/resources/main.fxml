@@ -16,17 +16,6 @@
   -->
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.chart.LineChart?>
-
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-
-
-<?import eu.hansolo.medusa.Gauge?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
 <StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
@@ -36,22 +25,13 @@
             <Insets topRightBottomLeft="25"/>
         </padding>
         <VBox fx:id="vBox" alignment="CENTER"/>
-        <GridPane fx:id="gridPane" maxWidth="Infinity" StackPane.alignment="CENTER" >
+        <GridPane fx:id="gridPane" maxWidth="Infinity" StackPane.alignment="CENTER">
             <padding>
                 <Insets topRightBottomLeft="25"/>
             </padding>
-            <!--        <HBox fx:id="hBox"  alignment="CENTER" spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0">-->
-            <!--            <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>-->
-            <!--            <Button fx:id="btnConnectSensor" onAction="#handleSensorConnectButton" text="Connect sensor"/>-->
-            <!--            <Button fx:id="btnLogWeather" onAction="#startWeatherLogging" text="Log weather"/>-->
-            <!--        </HBox>-->
         </GridPane>
     </VBox>
-
-
-    </StackPane>
-
-<!--</StackPane>-->
+</StackPane>
 
 
 

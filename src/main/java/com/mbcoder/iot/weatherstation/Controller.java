@@ -61,13 +61,10 @@ public class Controller {
 
       weatherStationID = "RaspPi";
 
+      // set up the UI
       buildAndDisplayGauges();
-
+      // read data
       startWeatherLogging();
-
-
-
-
 
     } catch (Exception e) {
       // on any error, display the stack trace.
@@ -75,7 +72,6 @@ public class Controller {
 
     }
   }
-
 
   @FXML
   private void handleSensorConnectButton() {
@@ -87,6 +83,9 @@ public class Controller {
     weatherSensor = new BMP280Device(pi4j, BMP280Declares.DEFAULT_BUS, 0x76);
   }
 
+  /**
+   * Starts logging data coming from either a simulated source, or the Raspberry Pi.
+   */
   @FXML
   private void startWeatherLogging() {
     // timer for reading sensor and logging results
@@ -125,6 +124,13 @@ public class Controller {
 
   }
 
+  /**
+   * Updates the display with temperature, pressure and humidity readings.
+   *
+   * @param temperature temperature in ºC
+   * @param pressure pressure in mB
+   * @param humidity humidity in %
+   */
   private void updateDisplay(double temperature, double pressure, double humidity) {
 
     // update the temperature and pressure
@@ -134,8 +140,10 @@ public class Controller {
 
   }
 
+  /**
+   * Builds a gauge for each sensor and displays it.
+   */
   private void buildAndDisplayGauges() {
-
 
     humidityGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.LCD)
@@ -150,7 +158,6 @@ public class Controller {
     barometerGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.SECTION)
       .needleColor(Color.BLACK)
-//      .needleColor(Color.rgb(64, 101, 190))
       .title("Pressure")
       .minValue(940)
       .maxValue(1060)
@@ -201,8 +208,7 @@ public class Controller {
 
     barometerFGauge = new FGauge (barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
 
-    gridPane.add(humidityGauge, 0, 0);
-    vBox.getChildren().add(barometerFGauge);
+
 
     digitalTempGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.LCD)
@@ -215,10 +221,11 @@ public class Controller {
       .unit("\u00B0C")
       .build();
 
+    gridPane.add(humidityGauge, 0, 0);
+    vBox.getChildren().add(barometerFGauge);
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
-
 
   }
 
