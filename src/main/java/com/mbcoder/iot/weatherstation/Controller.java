@@ -12,16 +12,11 @@ import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import com.pi4j.Pi4J;
-
 
 import java.text.DecimalFormat;
 import java.util.Random;
@@ -31,25 +26,15 @@ import java.util.TimerTask;
 public class Controller {
 
   @FXML
-  CheckBox chkSimulated;
-  @FXML
-  Button btnLogWeather;
-  @FXML
-  Button btnConnectSensor;
-  @FXML
   VBox vBox;
   private static final DecimalFormat formatter = new DecimalFormat("0.00");
   private String weatherStationID = ""; // this is the unique weather station id
-  private boolean updateGraph = false; // flag set true if its time to update the graph
 
-  private boolean firstReading = true;
   @FXML private Gauge humidityGauge;
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
-  @FXML private FGauge barometerFGauge;
+  private Label pressureReadingLabel;
 
-  @FXML
-  private XYChart.Series<Number, Number> tempSeries;
   private Timer loggingTimer;
   @FXML
   private GridPane gridPane;
@@ -106,9 +91,9 @@ public class Controller {
 //        if (chkSimulated.isSelected()) {
           // make up a random temperature and pressure
           Random random = new Random();
-          currentTemperature = (random.nextDouble() * 10) + 10; // try negative temperatures
+          currentTemperature = (random.nextDouble() * 10) + 10;
           currentPressureMb = 990 + random.nextDouble() * 15;
-          currentHumidity = 60 + random.nextDouble() * 15; // %
+          currentHumidity = 60 + random.nextDouble() * 15;
 //        } else {
           // read from the sensor
 //          currentTemperature = weatherSensor.temperatureC();
@@ -137,6 +122,8 @@ public class Controller {
     humidityGauge.setValue(humidity);
     digitalTempGauge.setValue(temperature);
     barometerGauge.setValue(pressure);
+    int intPressure = Double.valueOf(pressure).intValue();
+    pressureReadingLabel.setText("Atmospheric pressure: " + intPressure + " mB");
 
   }
 
@@ -159,6 +146,7 @@ public class Controller {
       .skinType(Gauge.SkinType.SECTION)
       .needleColor(Color.BLACK)
       .title("Pressure")
+      .markersVisible(true)
       .minValue(940)
       .maxValue(1060)
       .animated(true)
@@ -206,9 +194,7 @@ public class Controller {
           .build())
       .build();
 
-    barometerFGauge = new FGauge (barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
-
-
+    FGauge barometerFGauge = new FGauge(barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
 
     digitalTempGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.LCD)
@@ -222,7 +208,11 @@ public class Controller {
       .build();
 
     gridPane.add(humidityGauge, 0, 0);
-    vBox.getChildren().add(barometerFGauge);
+    pressureReadingLabel = new Label("Pressure (mB)" );
+    pressureReadingLabel.setStyle("-fx-text-fill: royalblue; -fx-font-family: Tahoma;");
+//    pressureReadingLabel.setStyle("-fx-font-family: Arial");
+
+    vBox.getChildren().addAll(barometerFGauge, pressureReadingLabel);
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
