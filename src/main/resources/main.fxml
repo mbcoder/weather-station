@@ -28,62 +28,27 @@
 
 <?import eu.hansolo.medusa.Gauge?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.geometry.Insets?>
 <StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
-           VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity">
-
-    <GridPane fx:id="gridPane">
-        <HBox fx:id="hBox"  alignment="CENTER" spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0">
-            <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>
-            <Button fx:id="btnConnectSensor" onAction="#handleSensorConnectButton" text="Connect sensor"/>
-            <Button fx:id="btnLogWeather" onAction="#startWeatherLogging" text="Log weather"/>
-        </HBox>
-<!--        <VBox fx:id="windowsVBox" GridPane.rowIndex="0" GridPane.columnIndex="0">-->
-            <!--        <top>-->
-
-            <!--        </top>-->
-
-            <!--    <left>-->
-<!--            <HBox >-->
-<!--                <Label fx:id="labelTemp" text="..." alignment="CENTER" />-->
-<!--                &lt;!&ndash;            <Gauge fx:id="tempGauge" skinType="LCD" lcdFont="DIGITAL" lcdDesign="RED_DARKRED" title="Temperature" unit="°C"/>&ndash;&gt;-->
-<!--            </HBox>-->
-            <!--    </left>-->
-            <!--    <right>-->
-<!--            <HBox>-->
-<!--                <Label fx:id="labelPressure" text="..."/>-->
-                <!--            <Gauge fx:id="pressureGauge" skinType="LCD" title="Pressure" unit="mB" lcdCrystalEnabled="true" lcdVisible="true" maxMeasuredValue="2000" maxValue="2000" maxWidth="Infinity"-->
-                <!--                   lcdDesign="BLUE_LIGHTBLUE" lcdFont="DIGITAL" sectionIconsVisible="true" sectionsVisible="true"/>-->
-<!--            </HBox>-->
-            <!--    </right>-->
-
-            <!--        <bottom>-->
-
-<!--        </VBox>-->
-<!--        <Label text="This is a weather station reading" GridPane.rowIndex="1" GridPane.columnIndex="1"/>-->
-
-    </GridPane>
+           VBox.vgrow="ALWAYS">
+    <VBox StackPane.alignment="CENTER">
+        <padding>
+            <Insets topRightBottomLeft="25"/>
+        </padding>
+        <VBox fx:id="vBox" alignment="CENTER"/>
+        <GridPane fx:id="gridPane" maxWidth="Infinity" StackPane.alignment="CENTER" >
+            <padding>
+                <Insets topRightBottomLeft="25"/>
+            </padding>
+            <!--        <HBox fx:id="hBox"  alignment="CENTER" spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0">-->
+            <!--            <CheckBox fx:id="chkSimulated" text="Simulated" selected="true"/>-->
+            <!--            <Button fx:id="btnConnectSensor" onAction="#handleSensorConnectButton" text="Connect sensor"/>-->
+            <!--            <Button fx:id="btnLogWeather" onAction="#startWeatherLogging" text="Log weather"/>-->
+            <!--        </HBox>-->
+        </GridPane>
+    </VBox>
 
 
-            <!--Controls box-->
-<!--            <VBox fx:id="vBox" StackPane.alignment="BOTTOM_CENTER" maxWidth="Infinity" maxHeight="Infinity" styleClass="panel-region">-->
-<!--                <LineChart fx:id="tempChart" title="Profile" animated="false">-->
-<!--                    <xAxis>-->
-<!--                        <NumberAxis fx:id="xAxisTemp" side="BOTTOM" label="Observation" tickUnit="0"/>-->
-<!--                    </xAxis>-->
-<!--                    <yAxis>-->
-<!--                        <NumberAxis fx:id="yAxisTemp" side="LEFT" label="Temp (C)" tickUnit="0"/>-->
-<!--                    </yAxis>-->
-<!--                </LineChart>-->
-<!--                <LineChart fx:id="pressureChart" title="Profile" animated="false">-->
-<!--                    <xAxis>-->
-<!--                        <NumberAxis fx:id="xAxisPressure" side="BOTTOM" label="Observation" tickUnit="0"/>-->
-<!--                    </xAxis>-->
-<!--                    <yAxis>-->
-<!--                        <NumberAxis fx:id="yAxisPressure" side="LEFT" label="Pressure" tickUnit="0"/>-->
-<!--                    </yAxis>-->
-<!--                </LineChart>-->
-<!--            </VBox>-->
-<!--        </bottom>-->
     </StackPane>
 
 <!--</StackPane>-->

@@ -38,7 +38,7 @@ public class Weather_logger extends Application {
 
     // set the title and size of the stage and show it
     stage.setTitle("Weather station logger");
-    stage.setWidth(800);
+    stage.setWidth(500);
     stage.setHeight(500);
     stage.setScene(scene);
     stage.show();
