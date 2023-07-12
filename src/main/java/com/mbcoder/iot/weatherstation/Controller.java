@@ -12,7 +12,6 @@ import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -33,7 +32,6 @@ public class Controller {
   @FXML private Gauge humidityGauge;
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
-  private Label pressureReadingLabel;
 
   private Timer loggingTimer;
   @FXML
@@ -121,9 +119,9 @@ public class Controller {
     // update the temperature and pressure
     humidityGauge.setValue(humidity);
     digitalTempGauge.setValue(temperature);
-    barometerGauge.setValue(pressure);
     int intPressure = Double.valueOf(pressure).intValue();
-    pressureReadingLabel.setText("Atmospheric pressure: " + intPressure + " mB");
+
+    barometerGauge.setValue(intPressure);
 
   }
 
@@ -145,11 +143,18 @@ public class Controller {
     barometerGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.SECTION)
       .needleColor(Color.BLACK)
-      .title("Pressure")
+      .title("Atmospheric Pressure")
+      .unit(" mbar")
+      .unitColor(Color.WHITE)
+      .titleColor(Color.WHITE)
+      .valueVisible(true)
+      .valueColor(Color.WHITE)
       .markersVisible(true)
+      .decimals(0)
       .minValue(940)
       .maxValue(1060)
       .animated(true)
+      .knobColor(Color.FLORALWHITE)
       .highlightSections(true)
       .sections(
         SectionBuilder.create()
@@ -208,11 +213,8 @@ public class Controller {
       .build();
 
     gridPane.add(humidityGauge, 0, 0);
-    pressureReadingLabel = new Label("Pressure (mB)" );
-    pressureReadingLabel.setStyle("-fx-text-fill: royalblue; -fx-font-family: Tahoma;");
-//    pressureReadingLabel.setStyle("-fx-font-family: Arial");
 
-    vBox.getChildren().addAll(barometerFGauge, pressureReadingLabel);
+    vBox.getChildren().addAll(barometerFGauge);
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
