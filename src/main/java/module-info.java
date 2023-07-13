@@ -19,6 +19,13 @@ module com.mbcoder.iot.weatherstation {
   requires com.esri.arcgisruntime;
   requires javafx.graphics;
   requires org.slf4j.nop;
+  requires javafx.fxml;
+  requires java.xml;
+
+  requires eu.hansolo.medusa;
+
+  // make all @FXML annotated objects reflectively accessible to the javafx.fxml module
+  opens com.mbcoder.iot.weatherstation to javafx.fxml;
 
   // Pi4J MODULES
   requires com.pi4j;

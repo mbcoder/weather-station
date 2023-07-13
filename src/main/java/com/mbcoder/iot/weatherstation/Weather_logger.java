@@ -16,238 +16,51 @@
 
 package com.mbcoder.iot.weatherstation;
 
-import com.pi4j.Pi4J;
-import com.pi4j.devices.bmp280.BMP280Declares;
-import com.pi4j.devices.bmp280.BMP280Device;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
-import java.text.DecimalFormat;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.IOException;
+
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Weather_logger extends Application {
 
+  private static Controller controller;
 
-    private BMP280Device weatherSensor;
-    private String weatherStationID = ""; // this is the unique weather station id
-    private CheckBox chkSimulated;
-    private int sampleFrequency = 1000; // 10000; // time between sensor samples in milliseconds
-    private int graphUpdateFrequency = 4000; //900000; // 4 updates per hour
-    private Timer loggingTimer; // timer for reading sensors and logging data
-    private Timer graphTimer; // timer for flag graph updates
-    private boolean updateGraph = false; // flag set true if its time to update the graph
-    private Label labelTemp;
-    private Label labelPressure;
-    private static final DecimalFormat formatter = new DecimalFormat("0.00");
-    private NumberAxis xAxisTemp;
-    private NumberAxis yAxisTemp;
-    private XYChart.Series tempSeries;
-    private NumberAxis xAxisPressure;
-    private NumberAxis yAxisPressure;
-    private XYChart.Series pressureSeries;
-    private int maxReadings = 100; // number of reading shown in the graph,  With updates every 15 minutes, this allows for just over a day
-    private int readingCount = 0;
-    private boolean firstReading = true;
+  @Override
+  public void start(Stage stage) throws IOException {
 
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
+    Parent root = loader.load();
+    controller = loader.getController();
+    Scene scene = new Scene(root);
 
-    public static void main(String[] args) {
+    // set the title and size of the stage and show it
+    stage.setTitle("Weather station logger");
+    stage.setWidth(500);
+    stage.setHeight(500);
+    stage.setScene(scene);
+    stage.show();
 
-        Application.launch(args);
-    }
+  }
 
-    @Override
-    public void start(Stage stage) {
+  /**
+   * Opens and runs application.
+   *
+   * @param args arguments passed to this application
+   */
+  public static void main(String[] args) {
+    Application.launch(args);
+  }
 
-        int busNum = BMP280Declares.DEFAULT_BUS;
-        int address = 0x76; // i2c address if bmp280 sensor
+  /**
+   * Stops and releases all resources used in application.
+   */
+  @Override
+  public void stop() {
 
-        // set the title and size of the stage and show it
-        stage.setTitle("Weather station logger");
-        stage.setWidth(800);
-        stage.setHeight(500);
-        stage.show();
+    controller.terminate();
 
-        // create a JavaFX scene with a stack pane as the root node and add it to the scene
-        BorderPane borderPane = new BorderPane();
-        Scene scene = new Scene(borderPane);
-        stage.setScene(scene);
-
-        HBox hBox = new HBox();
-
-        // temp checkbox for simulated feed for running on laptop (default on for now)
-        chkSimulated = new CheckBox("Simulated");
-        chkSimulated.setSelected(true);
-        hBox.getChildren().add(chkSimulated);
-
-        // button to connect to weather sensor
-        Button btnConnectSensor = new Button("Connect sensor");
-        btnConnectSensor.setOnAction(event -> {
-            // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
-            // which has a default address on bus 1 of 0x76
-            var pi4j = Pi4J.newContextBuilder().add(
-                LinuxFsI2CProvider.newInstance()).build();
-
-            weatherSensor = new BMP280Device(pi4j, busNum, address);
-        });
-        hBox.getChildren().add(btnConnectSensor);
-
-        // button to start logging weather information (temperature and pressure)
-        Button btnLogWeather = new Button("Log weather");
-        btnLogWeather.setOnAction(event -> {
-            startWeatherLogging();
-        });
-        hBox.getChildren().add(btnLogWeather);
-
-        borderPane.setTop(hBox);
-
-        VBox vBox = new VBox();
-        borderPane.setCenter(vBox);
-
-        // crude labels for showing latest data
-        labelTemp = new Label("...");
-        labelTemp.setFont(new Font("Arial", 48));
-        labelPressure = new Label("...");
-        labelPressure.setFont(new Font("Arial", 48));
-
-        // defining X axis for temp
-        xAxisTemp = new NumberAxis(0, 0, 0);
-        xAxisTemp.setLabel("Observation");
-
-        // defining Y axis for temp
-        yAxisTemp = new NumberAxis(0, 0, 0);
-        yAxisTemp.setLabel("Temp");
-
-        // create line chart and data for temperature
-        LineChart chartTemperature = new LineChart(xAxisTemp, yAxisTemp);
-        tempSeries = new XYChart.Series();
-        tempSeries.setName("Temperature history");
-        chartTemperature.getData().add(tempSeries);
-
-        // defining X axes for pressure
-        xAxisPressure = new NumberAxis(0, 0, 0);
-        xAxisPressure.setLabel("Observation");
-
-        // defining Y aces for pressure
-        yAxisPressure = new NumberAxis(0, 0, 0);
-        yAxisPressure.setLabel("Pressure");
-
-        // create line chart and data for pressure
-        LineChart chartPressure = new LineChart(xAxisPressure, yAxisPressure);
-        pressureSeries = new XYChart.Series();
-        pressureSeries.setName("Pressure history");
-        chartPressure.getData().add(pressureSeries);
-
-        vBox.getChildren().addAll(labelTemp, labelPressure, chartTemperature, chartPressure);
-    }
-
-    private void startWeatherLogging() {
-        // timer for reading sensor and logging results
-        loggingTimer = new Timer();
-
-        loggingTimer.schedule( new TimerTask() {
-            public void run() {
-                double currentTemperature;
-                double currentPressureMb;
-
-                System.out.println("logging");
-
-                // is it a simulated feed?
-                if (chkSimulated.isSelected()) {
-                    // make up a random temperature and pressure
-                    Random random = new Random();
-                    currentTemperature = (random.nextDouble() * 2) + 10;
-                    currentPressureMb = 990 + random.nextDouble() * 10;
-                } else {
-                    // read from the sensor
-                    currentTemperature = weatherSensor.temperatureC();
-                    currentPressureMb = weatherSensor.pressureMb();
-                }
-
-                // update the display on JavaFX thread
-                Platform.runLater(()-> updateDisplay(currentTemperature, currentPressureMb));
-            }
-        }, 1000, sampleFrequency);
-
-        // timer for updating the graph.  this works by setting a flag which is picked up by the logging timer.
-        graphTimer = new Timer();
-        graphTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateGraph = true;
-                System.out.println("graph update time!");
-            }
-        }, 1000, graphUpdateFrequency);
-    }
-
-    private void updateDisplay(double temperature, double pressure) {
-        // update the temperature and pressure
-        labelTemp.setText("Temperature " + formatter.format(temperature) + "C");
-        labelPressure.setText("Pressure " + formatter.format(pressure) + " Mb");
-
-        // update the graph if its time - happens less frequently
-        if (updateGraph) {
-
-            // set the y axes on the first reading
-            if (firstReading) {
-                firstReading = false;
-                yAxisTemp.setLowerBound(temperature - 1);
-                yAxisTemp.setUpperBound(temperature + 1);
-                yAxisPressure.setLowerBound(pressure - 10);
-                yAxisPressure.setUpperBound(pressure + 10);
-            }
-
-            // add data to series for temp and pressure
-            tempSeries.getData().add(new XYChart.Data(readingCount, temperature));
-            pressureSeries.getData().add(new XYChart.Data(readingCount, pressure));
-
-            if (readingCount < maxReadings) {
-                // extent the x axes
-                xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-                xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-            } else {
-                // prune the oldest data and move along one step
-                tempSeries.getData().remove(0);
-                pressureSeries.getData().remove(0);
-                xAxisTemp.setLowerBound(xAxisTemp.getLowerBound() + 1);
-                xAxisTemp.setUpperBound(xAxisTemp.getUpperBound() + 1);
-                xAxisPressure.setLowerBound(xAxisPressure.getLowerBound() + 1);
-                xAxisPressure.setUpperBound(xAxisPressure.getUpperBound() + 1);
-            }
-
-            // adjust y axes bounds to match data
-            if (temperature > yAxisTemp.getUpperBound()) yAxisTemp.setUpperBound(temperature + 1);
-            if (temperature < yAxisTemp.getLowerBound()) yAxisTemp.setLowerBound(temperature - 1);
-
-            if (pressure > yAxisPressure.getUpperBound()) yAxisPressure.setUpperBound(pressure + 1);
-            if (pressure < yAxisPressure.getLowerBound()) yAxisPressure.setLowerBound(pressure - 1);
-
-            readingCount++;
-
-            // reset the flag for graph update
-            updateGraph = false;
-        }
-    }
-
-    /**
-     * Stops and releases all resources used in application.
-     */
-    @Override
-    public void stop() {
-        if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
-        if (graphTimer != null) graphTimer.cancel(); // same for graph timer
-    }
+  }
 }
