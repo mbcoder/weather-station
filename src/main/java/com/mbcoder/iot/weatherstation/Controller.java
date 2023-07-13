@@ -1,3 +1,19 @@
+/**
+ * Copyright 2023 Esri
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.mbcoder.iot.weatherstation;
 
 import com.pi4j.devices.bmp280.BMP280Declares;
@@ -40,6 +56,10 @@ public class Controller {
   private GridPane gridPane;
 
   private BMP280Device weatherSensor;
+  private boolean simulatedMode = true;
+  private double currentTemperature = 0;
+  private double currentPressureMb = 0;
+  private double currentHumidity = 0;
 
   public void initialize() {
     try {
@@ -54,7 +74,6 @@ public class Controller {
     } catch (Exception e) {
       // on any error, display the stack trace.
       e.printStackTrace();
-
     }
   }
 
@@ -81,32 +100,27 @@ public class Controller {
     int sampleFrequency = 5000;
     loggingTimer.schedule(new TimerTask() {
       public void run() {
-        double currentTemperature;
-        double currentPressureMb;
-        double currentHumidity;
-
         System.out.println("logging");
 
         // is it a simulated feed?
-//        if (chkSimulated.isSelected()) {
+        if (simulatedMode) {
           // make up a random temperature and pressure
           Random random = new Random();
           currentTemperature = (random.nextDouble() * 10) + 10;
           currentPressureMb = 990 + random.nextDouble() * 15;
           currentHumidity = 60 + random.nextDouble() * 15;
-//        } else {
+        } else {
           // read from the sensor
 //          currentTemperature = weatherSensor.temperatureC();
 //          currentPressureMb = weatherSensor.pressureMb();
 //          currentHumidity = 0;
 //          currentHumidity = weatherSensor.humidity();
-//        }
+       }
 
         // update the display on JavaFX thread
         Platform.runLater(() -> updateDisplay(currentTemperature, currentPressureMb, currentHumidity));
       }
     }, 1000, sampleFrequency);
-
   }
 
   /**
@@ -131,7 +145,6 @@ public class Controller {
    * Builds a gauge for each sensor and displays it.
    */
   private void buildAndDisplayGauges() {
-
     humidityGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.LCD)
       .title("Humidity")
@@ -210,15 +223,12 @@ public class Controller {
     gridPane.add(humidityGauge, 0, 0);
     pressureReadingLabel = new Label("Pressure (mB)" );
     pressureReadingLabel.setStyle("-fx-text-fill: royalblue; -fx-font-family: Tahoma;");
-//    pressureReadingLabel.setStyle("-fx-font-family: Arial");
 
     vBox.getChildren().addAll(barometerFGauge, pressureReadingLabel);
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
-
   }
-
 
   /**
    * Stops and releases all resources used in application.
