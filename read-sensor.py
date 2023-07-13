@@ -19,4 +19,4 @@ while True:
     print('Temp:{:05.2f}'.format(temperature))
     print('Pressure:{:05.2f}'.format(pressure))
     print('Humidity:{:05.2f}'.format(humidity))
-    time.sleep(1)
+    time.sleep(2)

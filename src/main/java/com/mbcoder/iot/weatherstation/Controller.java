@@ -56,10 +56,11 @@ public class Controller {
   private GridPane gridPane;
 
   private BMP280Device weatherSensor;
-  private boolean simulatedMode = true;
+  private boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
+  private BME280 sensor;
 
   public void initialize() {
     try {
@@ -92,8 +93,13 @@ public class Controller {
    */
   @FXML
   private void startWeatherLogging() {
-    // timer for reading sensor and logging results
+    // instance of bme280 sensor (not used in simulation mode)
+    if (!simulatedMode) {
+      sensor = new BME280();
+      sensor.startReadingSensor();
+    }
 
+    // timer for reading sensor and logging results
     loggingTimer = new Timer();
 
     // 10000; // time between sensor samples in milliseconds
@@ -111,10 +117,9 @@ public class Controller {
           currentHumidity = 60 + random.nextDouble() * 15;
         } else {
           // read from the sensor
-//          currentTemperature = weatherSensor.temperatureC();
-//          currentPressureMb = weatherSensor.pressureMb();
-//          currentHumidity = 0;
-//          currentHumidity = weatherSensor.humidity();
+          currentTemperature = sensor.getTemperature();
+          currentPressureMb = sensor.getTemperature();
+          currentHumidity = sensor.getHumidity();
        }
 
         // update the display on JavaFX thread
@@ -235,5 +240,6 @@ public class Controller {
    */
   void terminate() {
     if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
+    if (sensor != null) sensor.stopReadingSensor();
   }
 }
