@@ -11,11 +11,10 @@ from bme280 import BME280
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
-temperature = bme280.get_temperature()
-pressure = bme280.get_pressure()
-humidity = bme280.get_humidity()
-
 while True:
+    temperature = bme280.get_temperature()
+    pressure = bme280.get_pressure()
+    humidity = bme280.get_humidity()
     print('Temp:{:05.2f}'.format(temperature))
     print('Pressure:{:05.2f}'.format(pressure))
     print('Humidity:{:05.2f}'.format(humidity))
