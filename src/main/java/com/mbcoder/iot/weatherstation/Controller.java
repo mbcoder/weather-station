@@ -78,7 +78,7 @@ public class Controller {
     loggingTimer = new Timer();
 
     // 10000; // time between sensor samples in milliseconds
-    int sampleFrequency = 1000;
+    int sampleFrequency = 5000;
     loggingTimer.schedule(new TimerTask() {
       public void run() {
         double currentTemperature;
