@@ -143,7 +143,6 @@ public class Controller {
     barometerGauge.setValue(pressure);
     int intPressure = Double.valueOf(pressure).intValue();
     pressureReadingLabel.setText("Atmospheric pressure: " + intPressure + " mB");
-
   }
 
   /**
