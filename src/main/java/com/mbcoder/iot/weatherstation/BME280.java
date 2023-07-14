@@ -34,6 +34,13 @@ public class BME280 {
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
+        System.out.println("process pid " + process.info());
+
+        BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        String errorLine;
+        while ((errorLine = error.readLine()) != null){
+          System.out.println("error " + errorLine);
+        }
 
         BufferedReader reader =
             new BufferedReader(new InputStreamReader(process.getInputStream()));
