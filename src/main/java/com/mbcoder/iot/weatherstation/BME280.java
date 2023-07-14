@@ -31,9 +31,7 @@ public class BME280 {
 
     Runnable runnable= () -> {
       ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py")
-          .redirectInput(ProcessBuilder.Redirect.INHERIT)
-          .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-          .redirectError(ProcessBuilder.Redirect.INHERIT); ;
+          .directory(null);
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
