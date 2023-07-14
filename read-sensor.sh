@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python read-sensor.py
+python -u read-sensor.py
