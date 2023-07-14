@@ -28,6 +28,7 @@ import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -56,7 +57,7 @@ public class Controller {
   private GridPane gridPane;
 
   private BMP280Device weatherSensor;
-  private boolean simulatedMode = false;
+  private boolean simulatedMode = true;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
@@ -232,6 +233,14 @@ public class Controller {
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
+
+    Button tester = new Button("testing");
+    tester.setOnAction(event -> {
+      System.out.println("starting sensor");
+      sensor = new BME280();
+      sensor.startReadingSensor();
+    });
+    vBox.getChildren().add(tester);
   }
 
   /**
