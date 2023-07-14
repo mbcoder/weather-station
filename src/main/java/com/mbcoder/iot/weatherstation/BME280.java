@@ -30,8 +30,9 @@ public class BME280 {
   public void startReadingSensor() {
 
     Runnable runnable= () -> {
-      ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py")
-          .directory(null);
+      ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py");
+      processBuilder.redirectInput();
+
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
