@@ -60,11 +60,11 @@ public class Controller {
   private GridPane gridPane;
 
   private BMP280Device weatherSensor;
-  private boolean simulatedMode = true;
+  private boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
-  //private BME280 sensor;
+  private BME280 sensor;
 
   public void initialize() {
     try {
@@ -89,18 +89,18 @@ public class Controller {
   private void startWeatherLogging() {
     // instance of bme280 sensor (not used in simulation mode)
 
-    /*
+
     if (!simulatedMode) {
-      sensor = new BME280();
-      sensor.startReadingSensor();
+      System.out.println("connecting to sensor");
+      Context context = Pi4J.newAutoContext();
+
+      sensor = BME280Builder.get()
+          .context(context)
+          .build();
     }
-     */
 
-    Context context = Pi4J.newAutoContext();
 
-    BME280 sensor = BME280Builder.get()
-        .context(context)
-        .build();
+
 
     // timer for reading sensor and logging results
     loggingTimer = new Timer();
