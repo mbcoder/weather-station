@@ -121,7 +121,7 @@ public class Controller {
         } else {
           // read from the sensor
           currentTemperature = sensor.getTemperature();
-          currentPressureMb = sensor.getTemperature();
+          currentPressureMb = sensor.getPressure();
           currentHumidity = sensor.getRelativeHumidity();
        }
 
