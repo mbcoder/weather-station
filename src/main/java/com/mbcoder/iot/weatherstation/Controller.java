@@ -73,13 +73,8 @@ public class Controller {
       // set up the UI
       buildAndDisplayGauges();
 
-      // start sensor reading
-      //System.out.println("starting sensor");
-      //sensor = new BME280();
-      //sensor.startReadingSensor();
-
       // read data
-      // startWeatherLogging();
+      startWeatherLogging();
 
     } catch (Exception e) {
       // on any error, display the stack trace.
