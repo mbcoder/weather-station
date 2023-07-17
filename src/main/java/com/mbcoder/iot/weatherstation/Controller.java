@@ -106,7 +106,7 @@ public class Controller {
     loggingTimer = new Timer();
 
     // 10000; // time between sensor samples in milliseconds
-    int sampleFrequency = 5000;
+    int sampleFrequency = 1000;
     loggingTimer.schedule(new TimerTask() {
       public void run() {
         System.out.println("logging");
@@ -121,8 +121,10 @@ public class Controller {
         } else {
           // read from the sensor
           currentTemperature = sensor.getTemperature();
-          currentPressureMb = sensor.getPressure();
+          currentPressureMb = sensor.getPressure() / 100;
           currentHumidity = sensor.getRelativeHumidity();
+
+          System.out.println("temp:" + currentTemperature + " pressure:" + currentPressureMb + " humidity:" + currentHumidity);
        }
 
         // update the display on JavaFX thread
