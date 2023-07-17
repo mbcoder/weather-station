@@ -16,9 +16,9 @@
 
 package com.mbcoder.iot.weatherstation;
 
-import com.pi4j.devices.bmp280.BMP280Declares;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.devices.bmp280.BMP280Device;
-import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import eu.hansolo.medusa.FGauge;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
@@ -33,12 +33,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import com.pi4j.Pi4J;
 
 import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import one.microproject.rpi.hardware.gpio.sensors.BME280;
+import one.microproject.rpi.hardware.gpio.sensors.BME280Builder;
+import one.microproject.rpi.hardware.gpio.sensors.impl.BME280Impl;
 
 public class Controller {
 
@@ -61,7 +64,7 @@ public class Controller {
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
-  private BME280 sensor;
+  //private BME280 sensor;
 
   public void initialize() {
     try {
@@ -71,9 +74,9 @@ public class Controller {
       buildAndDisplayGauges();
 
       // start sensor reading
-      System.out.println("starting sensor");
-      sensor = new BME280();
-      sensor.startReadingSensor();
+      //System.out.println("starting sensor");
+      //sensor = new BME280();
+      //sensor.startReadingSensor();
 
       // read data
       // startWeatherLogging();
@@ -117,9 +120,9 @@ public class Controller {
           currentHumidity = 60 + random.nextDouble() * 15;
         } else {
           // read from the sensor
-          currentTemperature = sensor.getTemperature();
-          currentPressureMb = sensor.getTemperature();
-          currentHumidity = sensor.getHumidity();
+          //currentTemperature = sensor.getTemperature();
+          //currentPressureMb = sensor.getTemperature();
+          //currentHumidity = sensor.getHumidity();
        }
 
         // update the display on JavaFX thread
@@ -236,8 +239,18 @@ public class Controller {
     Button tester = new Button("testing");
     tester.setOnAction(event -> {
       System.out.println("starting sensor");
-      sensor = new BME280();
-      sensor.startReadingSensor();
+
+
+      Context context = Pi4J.newAutoContext();
+
+      BME280 sensor = BME280Builder.get()
+          .context(context)
+          .build();
+
+      System.out.println("sensor temp " + sensor.getTemperature());
+
+      //sensor = new BME280();
+      //sensor.startReadingSensor();
     });
     vBox.getChildren().add(tester);
   }
@@ -247,6 +260,6 @@ public class Controller {
    */
   void terminate() {
     if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
-    if (sensor != null) sensor.stopReadingSensor();
+    //if (sensor != null) sensor.stopReadingSensor();
   }
 }
