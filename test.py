@@ -8,10 +8,12 @@
 
 
 import time
+import random
 
 while True:
     print('Temp:21.14')
     print('Pressure:682.86')
     print('Humidity:63.41')
+    print(random.randint(0,9))
     time.sleep(2)
 
