@@ -75,6 +75,8 @@ public class BME280 {
   }
 
   public void stopReadingSensor() {
+    System.out.println("stopping sensor");
+
     if (process!=null) {
       process.destroy();
     }
