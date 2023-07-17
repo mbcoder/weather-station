@@ -7,10 +7,10 @@ except ImportError:
     from smbus import SMBus
 from bme280 import BME280
 
-print('alive!!!')
-print('Temp:21.14')
-print('Pressure:682.86')
-print('Humidity:22.0')
+println('alive!!!')
+println('Temp:21.14')
+println('Pressure:682.86')
+println('Humidity:22.0')
 
 # Initialise the BME280
 bus = SMBus(1)
@@ -20,7 +20,7 @@ while True:
     temperature = bme280.get_temperature()
     pressure = bme280.get_pressure()
     humidity = bme280.get_humidity()
-    print('Temp:{:05.2f}'.format(temperature))
-    print('Pressure:{:05.2f}'.format(pressure))
-    print('Humidity:{:05.2f}'.format(humidity))
+    println('Temp:{:05.2f}'.format(temperature))
+    println('Pressure:{:05.2f}'.format(pressure))
+    println('Humidity:{:05.2f}'.format(humidity))
     time.sleep(2)
