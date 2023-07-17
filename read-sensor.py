@@ -8,9 +8,7 @@ except ImportError:
     from smbus import SMBus
 from bme280 import BME280
 
-sys.stdout.write('Temp:21.14\n')
-sys.stdout.write('Pressure:682.86\n')
-sys.stdout.write('Humidity:22.0\n')
+
 
 # Initialise the BME280
 bus = SMBus(1)
@@ -24,3 +22,12 @@ while True:
     sys.stdout.write('Pressure:{:05.2f}\n'.format(pressure))
     sys.stdout.write('Humidity:{:05.2f}\n'.format(humidity))
     time.sleep(2)
+
+def main():
+    print("Hello World!")
+    sys.stdout.write('Temp:99.14\n')
+    sys.stdout.write('Pressure:111.86\n')
+    sys.stdout.write('Humidity:99.0\n')
+
+if __name__ == "__main__":
+    main()
