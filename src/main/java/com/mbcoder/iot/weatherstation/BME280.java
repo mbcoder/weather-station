@@ -17,6 +17,7 @@
 package com.mbcoder.iot.weatherstation;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -31,7 +32,9 @@ public class BME280 {
 
     Runnable runnable= () -> {
       //ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py");
-      ProcessBuilder processBuilder = new ProcessBuilder("python3", "read-sensor.py");
+      File file = new File("python.err");
+      ProcessBuilder processBuilder = new ProcessBuilder("python3", "read-sensor.py")
+          .redirectError(file);
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
