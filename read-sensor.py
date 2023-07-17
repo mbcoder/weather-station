@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 import time
+import sys
 try:
     from smbus2 import SMBus
 except ImportError:
     from smbus import SMBus
 from bme280 import BME280
 
-println('alive!!!')
-println('Temp:21.14')
-println('Pressure:682.86')
-println('Humidity:22.0')
+sys.stdout.write('Temp:21.14')
+sys.stdout.write('Pressure:682.86')
+sys.stdout.write('Humidity:22.0')
 
 # Initialise the BME280
 bus = SMBus(1)
@@ -20,7 +20,7 @@ while True:
     temperature = bme280.get_temperature()
     pressure = bme280.get_pressure()
     humidity = bme280.get_humidity()
-    println('Temp:{:05.2f}'.format(temperature))
-    println('Pressure:{:05.2f}'.format(pressure))
-    println('Humidity:{:05.2f}'.format(humidity))
+    sys.stdout.write('Temp:{:05.2f}'.format(temperature))
+    sys.stdout.write('Pressure:{:05.2f}'.format(pressure))
+    sys.stdout.write('Humidity:{:05.2f}'.format(humidity))
     time.sleep(2)
