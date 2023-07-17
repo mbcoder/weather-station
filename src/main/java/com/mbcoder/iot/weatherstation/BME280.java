@@ -32,9 +32,11 @@ public class BME280 {
 
     Runnable runnable= () -> {
       //ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py");
-      File file = new File("python.err");
+      File errFile = new File("python.err");
+      File inFile = new File("python.in");
       ProcessBuilder processBuilder = new ProcessBuilder("python3", "read-sensor.py")
-          .redirectError(file);
+          .redirectError(errFile)
+          .redirectInput(inFile);
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
