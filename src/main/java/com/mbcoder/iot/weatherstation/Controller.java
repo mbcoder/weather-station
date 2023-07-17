@@ -99,8 +99,13 @@ public class Controller {
       sensor = new BME280();
       sensor.startReadingSensor();
     }
-
      */
+
+    Context context = Pi4J.newAutoContext();
+
+    BME280 sensor = BME280Builder.get()
+        .context(context)
+        .build();
 
     // timer for reading sensor and logging results
     loggingTimer = new Timer();
@@ -120,9 +125,9 @@ public class Controller {
           currentHumidity = 60 + random.nextDouble() * 15;
         } else {
           // read from the sensor
-          //currentTemperature = sensor.getTemperature();
-          //currentPressureMb = sensor.getTemperature();
-          //currentHumidity = sensor.getHumidity();
+          currentTemperature = sensor.getTemperature();
+          currentPressureMb = sensor.getTemperature();
+          currentHumidity = sensor.getRelativeHumidity();
        }
 
         // update the display on JavaFX thread
@@ -240,6 +245,7 @@ public class Controller {
     tester.setOnAction(event -> {
       System.out.println("starting sensor");
 
+      /*
 
       Context context = Pi4J.newAutoContext();
 
@@ -249,8 +255,8 @@ public class Controller {
 
       System.out.println("sensor temp " + sensor.getTemperature());
 
-      //sensor = new BME280();
-      //sensor.startReadingSensor();
+       */
+
     });
     vBox.getChildren().add(tester);
   }
