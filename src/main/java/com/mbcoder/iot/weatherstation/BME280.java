@@ -30,17 +30,11 @@ public class BME280 {
   public void startReadingSensor() {
 
     Runnable runnable= () -> {
-      ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.sh");
+      ProcessBuilder processBuilder = new ProcessBuilder("./read-sensor.py");
       //ProcessBuilder processBuilder = new ProcessBuilder("./test.py");
       try {
         process = processBuilder.start();
         System.out.println("process pid " + process.info());
-
-        BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String errorLine;
-        while ((errorLine = error.readLine()) != null){
-          System.out.println("error " + errorLine);
-        }
 
         BufferedReader reader =
             new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -72,6 +66,7 @@ public class BME280 {
         throw new RuntimeException(e);
       }
     };
+
 
     Thread thread = new Thread(runnable);
     thread.start();

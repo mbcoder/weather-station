@@ -84,26 +84,20 @@ public class Controller {
     }
   }
 
-  @FXML
-  private void handleSensorConnectButton() {
-    // initialise connection to the BMP280 sensor in the i2c bus.  Using the Pimoroni BMP280
-    // which has a default address on bus 1 of 0x76
-    var pi4j = Pi4J.newContextBuilder().add(
-      LinuxFsI2CProvider.newInstance()).build();
-
-    weatherSensor = new BMP280Device(pi4j, BMP280Declares.DEFAULT_BUS, 0x76);
-  }
-
   /**
    * Starts logging data coming from either a simulated source, or the Raspberry Pi.
    */
   @FXML
   private void startWeatherLogging() {
     // instance of bme280 sensor (not used in simulation mode)
+
+    /*
     if (!simulatedMode) {
       sensor = new BME280();
       sensor.startReadingSensor();
     }
+
+     */
 
     // timer for reading sensor and logging results
     loggingTimer = new Timer();
