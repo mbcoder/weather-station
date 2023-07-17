@@ -38,6 +38,7 @@ public class BME280Impl implements BME280 {
   private static final byte CONTROL_MEASUREMENT_OSRS_T_1		= (byte)0x20;
   private static final byte CONTROL_MEASUREMENT_OSRS_P_1		= (byte)0x04;
   private static final byte CONTROL_MEASUREMENT_FORCED_MODE		= (byte)0x01;
+  private static final byte CONTROL_MEASUREMENT_NORMAL_MODE		= (byte)0x11;
 
   private static final int CONFIG_REG			= 0xf5;
   private static final byte CONFIG_T_SB_0_5		= (byte)0x00;
@@ -132,8 +133,8 @@ public class BME280Impl implements BME280 {
   @Override
   public Data getSensorValues() {
     write(CONTROL_HUMIDITY_REG, CONTROL_HUMIDITY_OSRS_H_1);
-    write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 | CONTROL_MEASUREMENT_FORCED_MODE));
-    //write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 ));
+    //write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 | CONTROL_MEASUREMENT_FORCED_MODE));
+    write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 | CONTROL_MEASUREMENT_NORMAL_MODE ));
     write(CONFIG_REG, CONFIG_T_SB_0_5);
     waitFor(MEASUREMENT_TIME_MILLIS);
     byte[] data = read(PRESSURE_DATA_REG, SENSOR_DATA_LENGTH);
