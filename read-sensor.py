@@ -11,6 +11,8 @@ from bme280 import BME280
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
+print('alive!!!')
+
 while True:
     temperature = bme280.get_temperature()
     pressure = bme280.get_pressure()

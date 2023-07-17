@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sudo python -u test.py
+python3 -u test.py
