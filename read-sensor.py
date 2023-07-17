@@ -14,7 +14,7 @@ bme280 = BME280(i2c_dev=bus)
 print('alive!!!')
 print('Temp:21.14')
 print('Pressure:682.86')
-Print('Humidity:22')
+print('Humidity:22.0')
 
 while True:
     temperature = bme280.get_temperature()
