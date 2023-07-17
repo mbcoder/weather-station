@@ -44,7 +44,7 @@ public class BME280Impl implements BME280 {
   private static final int PRESSURE_DATA_REG		= 0xf7;
   private static final int SENSOR_DATA_LENGTH	 = 8;
 
-  private static final int MEASUREMENT_TIME_MILLIS = 1000;
+  private static final int MEASUREMENT_TIME_MILLIS = 10;
 
   private final int address;
   private final String deviceId;
@@ -131,11 +131,11 @@ public class BME280Impl implements BME280 {
 
   @Override
   public Data getSensorValues() {
-    write(CONTROL_HUMIDITY_REG, CONTROL_HUMIDITY_OSRS_H_1);
+    //write(CONTROL_HUMIDITY_REG, CONTROL_HUMIDITY_OSRS_H_1);
     //write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 | CONTROL_MEASUREMENT_FORCED_MODE));
-    write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 ));
-    write(CONFIG_REG, CONFIG_T_SB_0_5);
-    waitFor(MEASUREMENT_TIME_MILLIS);
+    //write(CONTROL_MEASUREMENT_REG, (byte)(CONTROL_MEASUREMENT_OSRS_T_1 | CONTROL_MEASUREMENT_OSRS_P_1 ));
+    //write(CONFIG_REG, CONFIG_T_SB_0_5);
+    //waitFor(MEASUREMENT_TIME_MILLIS);
     byte[] data = read(PRESSURE_DATA_REG, SENSOR_DATA_LENGTH);
     float[] floats = compensateDataBME280(data, digT1, digT2, digT3,
         digP1, digP2, digP3, digP4, digP5, digP6, digP7, digP8, digP9,
