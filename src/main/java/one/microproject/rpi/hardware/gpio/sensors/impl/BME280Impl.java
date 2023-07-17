@@ -44,7 +44,7 @@ public class BME280Impl implements BME280 {
   private static final int PRESSURE_DATA_REG		= 0xf7;
   private static final int SENSOR_DATA_LENGTH	 = 8;
 
-  private static final int MEASUREMENT_TIME_MILLIS = 10;
+  private static final int MEASUREMENT_TIME_MILLIS = 1000;
 
   private final int address;
   private final String deviceId;
