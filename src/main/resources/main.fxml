@@ -27,7 +27,7 @@
             <Insets topRightBottomLeft="25"/>
         </padding>
         <VBox fx:id="vBox" alignment="CENTER"/>
-        <GridPane maxWidth="Infinity" StackPane.alignment="CENTER">
+        <GridPane maxWidth="Infinity" alignment="CENTER">
             <padding>
                 <Insets topRightBottomLeft="25"/>
             </padding>
