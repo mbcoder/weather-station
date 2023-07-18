@@ -124,6 +124,7 @@ public class Controller {
           currentPressureMb = sensor.getPressure() / 100;
           currentHumidity = sensor.getRelativeHumidity();
 
+          // reset the sensor after each read to prevent i2c locking
           sensor.reset();
 
           System.out.println("temp:" + currentTemperature + " pressure:" + currentPressureMb + " humidity:" + currentHumidity);
