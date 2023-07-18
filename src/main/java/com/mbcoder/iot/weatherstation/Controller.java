@@ -37,10 +37,7 @@ public class Controller implements Initializable {
   private Gauge digitalTempGauge;
   @FXML
   private Gauge barometerGauge;
-
   private Timer loggingTimer;
-  @FXML
-  private GridPane gridPane;
 
   private BMP280Device weatherSensor;
 
@@ -129,7 +126,7 @@ public class Controller implements Initializable {
   }
 
   /**
-   * Builds a gauge for each sensor and displays it.
+   * Builds a section style gauge for the air pressure sensor and displays it.
    */
   private void buildAndDisplayGauges() {
 
@@ -193,7 +190,6 @@ public class Controller implements Initializable {
       .build();
 
     FGauge barometerFGauge = new FGauge(barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
-
     vBox.getChildren().addAll(barometerFGauge);
 
   }
