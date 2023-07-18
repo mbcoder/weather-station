@@ -40,7 +40,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
 <?import eu.hansolo.medusa.Gauge?>
-<?import eu.hansolo.medusa.FGauge?>
 <StackPane fx:controller="com.mbcoder.iot.weatherstation.Controller" xmlns:fx="http://javafx.com/fxml"
            VBox.vgrow="ALWAYS">
     <VBox StackPane.alignment="CENTER">
@@ -48,7 +47,7 @@
             <Insets topRightBottomLeft="25"/>
         </padding>
         <VBox fx:id="vBox" alignment="CENTER"/>
-        <GridPane fx:id="gridPane" maxWidth="Infinity" StackPane.alignment="CENTER">
+        <GridPane maxWidth="Infinity" StackPane.alignment="CENTER">
             <padding>
                 <Insets topRightBottomLeft="25"/>
             </padding>
@@ -76,8 +75,6 @@
                    maxMeasuredValueVisible="false"
                    minMeasuredValueVisible="false"
                    unit="ºC"/>
-
-
         </GridPane>
     </VBox>
 </StackPane>
