@@ -23,14 +23,11 @@ import eu.hansolo.medusa.FGauge;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
 import eu.hansolo.medusa.GaugeDesign;
-import eu.hansolo.medusa.LcdDesign;
 import eu.hansolo.medusa.SectionBuilder;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -145,7 +142,7 @@ public class Controller implements Initializable {
 
     barometerGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.SECTION)
-      .needleColor(Color.BLACK)
+      .needleColor(Color.rgb(95,123,210)) // matches needle to other gauge font color
       .title("Atmospheric Pressure")
       .unit(" mbar")
       .unitColor(Color.WHITE)
