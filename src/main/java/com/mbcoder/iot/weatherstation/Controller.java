@@ -28,23 +28,25 @@ import eu.hansolo.medusa.SectionBuilder;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import one.microproject.rpi.hardware.gpio.sensors.BME280;
 import one.microproject.rpi.hardware.gpio.sensors.BME280Builder;
 
-public class Controller {
+public class Controller implements Initializable {
 
-  @FXML
-  VBox vBox;
+  @FXML VBox vBox;
   private static final DecimalFormat formatter = new DecimalFormat("0.00");
   private String weatherStationID = ""; // this is the unique weather station id
 
@@ -53,27 +55,21 @@ public class Controller {
   @FXML private Gauge barometerGauge;
   private Timer loggingTimer;
 
-
   private boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
   private BME280 sensor;
 
-  public void initialize() {
-    try {
-      weatherStationID = "RaspPi";
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    weatherStationID = "RaspPi";
 
-      // set up the UI
-      buildAndDisplayGauges();
+    // set up the UI
+    buildAndDisplayGauges();
+    // read data
+    startWeatherLogging();
 
-      // read data
-      startWeatherLogging();
-
-    } catch (Exception e) {
-      // on any error, display the stack trace.
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -87,8 +83,8 @@ public class Controller {
       Context context = Pi4J.newAutoContext();
 
       sensor = BME280Builder.get()
-          .context(context)
-          .build();
+        .context(context)
+        .build();
     }
 
     // timer for reading sensor and logging results
@@ -117,7 +113,7 @@ public class Controller {
           sensor.reset();
 
           System.out.println("temp:" + currentTemperature + " pressure:" + currentPressureMb + " humidity:" + currentHumidity);
-       }
+        }
 
         // update the display on JavaFX thread
         Platform.runLater(() -> updateDisplay(currentTemperature, currentPressureMb, currentHumidity));
@@ -129,17 +125,16 @@ public class Controller {
    * Updates the display with temperature, pressure and humidity readings.
    *
    * @param temperature temperature in ºC
-   * @param pressure pressure in mB
-   * @param humidity humidity in %
+   * @param pressure    pressure in mB
+   * @param humidity    humidity in %
    */
   private void updateDisplay(double temperature, double pressure, double humidity) {
 
-    // update the temperature and pressure
+    // update the temperature and humidity
     humidityGauge.setValue(humidity);
-    
     digitalTempGauge.setValue(temperature);
+    // update the air pressure
     int intPressure = Double.valueOf(pressure).intValue();
-
     barometerGauge.setValue(intPressure);
   }
 
