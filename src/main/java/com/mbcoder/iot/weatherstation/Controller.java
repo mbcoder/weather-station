@@ -63,7 +63,7 @@ public class Controller implements Initializable {
     weatherStationID = "RaspPi";
 
     // set up the UI
-    buildAndDisplayGauges();
+    buildAndDisplayBarometerGauge();
     // read data
     startWeatherLogging();
 
@@ -138,7 +138,7 @@ public class Controller implements Initializable {
   /**
    * Builds a section style gauge for the air pressure sensor and displays it.
    */
-  private void buildAndDisplayGauges() {
+  private void buildAndDisplayBarometerGauge() {
 
     barometerGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.SECTION)
