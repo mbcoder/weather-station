@@ -18,17 +18,16 @@ package com.mbcoder.iot.weatherstation;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.devices.bmp280.BMP280Device;
+
 import eu.hansolo.medusa.FGauge;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
 import eu.hansolo.medusa.GaugeDesign;
 import eu.hansolo.medusa.LcdDesign;
 import eu.hansolo.medusa.SectionBuilder;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -41,7 +40,6 @@ import java.util.TimerTask;
 
 import one.microproject.rpi.hardware.gpio.sensors.BME280;
 import one.microproject.rpi.hardware.gpio.sensors.BME280Builder;
-import one.microproject.rpi.hardware.gpio.sensors.impl.BME280Impl;
 
 public class Controller {
 
@@ -54,12 +52,10 @@ public class Controller {
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
   private Label pressureReadingLabel;
-
   private Timer loggingTimer;
   @FXML
   private GridPane gridPane;
 
-  private BMP280Device weatherSensor;
   private boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
@@ -88,8 +84,6 @@ public class Controller {
   @FXML
   private void startWeatherLogging() {
     // instance of bme280 sensor (not used in simulation mode)
-
-
     if (!simulatedMode) {
       System.out.println("connecting to sensor");
       Context context = Pi4J.newAutoContext();
@@ -98,9 +92,6 @@ public class Controller {
           .context(context)
           .build();
     }
-
-
-
 
     // timer for reading sensor and logging results
     loggingTimer = new Timer();
@@ -240,25 +231,6 @@ public class Controller {
     gridPane.add(digitalTempGauge, 1, 0);
     digitalTempGauge.setMaxWidth(500);
     humidityGauge.setMaxWidth(500);
-
-    Button tester = new Button("testing");
-    tester.setOnAction(event -> {
-      System.out.println("starting sensor");
-
-      /*
-
-      Context context = Pi4J.newAutoContext();
-
-      BME280 sensor = BME280Builder.get()
-          .context(context)
-          .build();
-
-      System.out.println("sensor temp " + sensor.getTemperature());
-
-       */
-
-    });
-    vBox.getChildren().add(tester);
   }
 
   /**
@@ -266,6 +238,12 @@ public class Controller {
    */
   void terminate() {
     if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
-    //if (sensor != null) sensor.stopReadingSensor();
+    if (sensor != null) {
+      try {
+        sensor.close();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }
