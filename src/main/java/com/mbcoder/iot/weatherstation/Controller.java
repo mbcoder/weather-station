@@ -7,31 +7,36 @@ import eu.hansolo.medusa.FGauge;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;
 import eu.hansolo.medusa.GaugeDesign;
-import eu.hansolo.medusa.LcdDesign;
 import eu.hansolo.medusa.SectionBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
+import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import com.pi4j.Pi4J;
 
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Controller {
+public class Controller implements Initializable {
 
   @FXML
   VBox vBox;
   private static final DecimalFormat formatter = new DecimalFormat("0.00");
   private String weatherStationID = ""; // this is the unique weather station id
 
-  @FXML private Gauge humidityGauge;
-  @FXML private Gauge digitalTempGauge;
-  @FXML private Gauge barometerGauge;
+  @FXML
+  private Gauge humidityGauge;
+  @FXML
+  private Gauge digitalTempGauge;
+  @FXML
+  private Gauge barometerGauge;
 
   private Timer loggingTimer;
   @FXML
@@ -39,21 +44,16 @@ public class Controller {
 
   private BMP280Device weatherSensor;
 
-  public void initialize() {
-    try {
 
-      weatherStationID = "RaspPi";
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    weatherStationID = "RaspPi";
 
-      // set up the UI
-      buildAndDisplayGauges();
-      // read data
-      startWeatherLogging();
+    // set up the UI
+    buildAndDisplayGauges();
+    // read data
+    startWeatherLogging();
 
-    } catch (Exception e) {
-      // on any error, display the stack trace.
-      e.printStackTrace();
-
-    }
   }
 
   @FXML
@@ -73,6 +73,7 @@ public class Controller {
   private void startWeatherLogging() {
     // timer for reading sensor and logging results
 
+    digitalTempGauge.setSubTitle(weatherStationID);
     loggingTimer = new Timer();
 
     // 10000; // time between sensor samples in milliseconds
@@ -118,6 +119,8 @@ public class Controller {
 
     // update the temperature and pressure
     humidityGauge.setValue(humidity);
+
+    System.out.println(humidityGauge.getValue());
     digitalTempGauge.setValue(temperature);
     int intPressure = Double.valueOf(pressure).intValue();
 
@@ -129,16 +132,6 @@ public class Controller {
    * Builds a gauge for each sensor and displays it.
    */
   private void buildAndDisplayGauges() {
-
-    humidityGauge = GaugeBuilder.create()
-      .skinType(Gauge.SkinType.LCD)
-      .title("Humidity")
-      .lcdDesign(LcdDesign.GRAY_PURPLE)
-      .oldValueVisible(false)
-      .maxMeasuredValueVisible(false)
-      .minMeasuredValueVisible(false)
-      .unit("%")
-      .build();
 
     barometerGauge = GaugeBuilder.create()
       .skinType(Gauge.SkinType.SECTION)
@@ -201,23 +194,7 @@ public class Controller {
 
     FGauge barometerFGauge = new FGauge(barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
 
-    digitalTempGauge = GaugeBuilder.create()
-      .skinType(Gauge.SkinType.LCD)
-      .lcdDesign(LcdDesign.GRAY_PURPLE)
-      .title("Temperature")
-      .subTitle(weatherStationID)
-      .oldValueVisible(false)
-      .maxMeasuredValueVisible(false)
-      .minMeasuredValueVisible(false)
-      .unit("\u00B0C")
-      .build();
-
-    gridPane.add(humidityGauge, 0, 0);
-
     vBox.getChildren().addAll(barometerFGauge);
-    gridPane.add(digitalTempGauge, 1, 0);
-    digitalTempGauge.setMaxWidth(500);
-    humidityGauge.setMaxWidth(500);
 
   }
 
