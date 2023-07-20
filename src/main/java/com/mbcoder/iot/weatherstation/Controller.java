@@ -37,9 +37,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -51,14 +49,14 @@ import one.microproject.rpi.hardware.gpio.sensors.BME280Builder;
 public class Controller implements Initializable {
 
   @FXML VBox vBox;
-  private static final DecimalFormat formatter = new DecimalFormat("0.00");
-  private UUID weatherStationID = UUID.fromString("db12edca-7d28-45e6-84a3-9484c6e50d12"); // GlobalID of weather station for this unit
+  //private static final DecimalFormat formatter = new DecimalFormat("0.00");
+  private final UUID weatherStationID = UUID.fromString("db12edca-7d28-45e6-84a3-9484c6e50d12"); // GlobalID of weather station for this unit
   @FXML private Gauge humidityGauge;
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
   private Timer recordingTimer; // timer for reading from the sensors
   private Timer loggingTimer; // timer for logging data to the feature service
-  private boolean simulatedMode = false;
+  private final boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
