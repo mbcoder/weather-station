@@ -122,7 +122,7 @@ public class Controller implements Initializable {
             var addFuture = reportTable.addFeatureAsync(reportFeature);
             addFuture.addDoneListener(reportTable::applyEditsAsync);
           }
-        }, 10000,60000);
+        }, 10000,1800000);  // log to feature service every 30 minutes
       }
     });
   }
