@@ -62,6 +62,7 @@ public class Controller implements Initializable {
   private double currentHumidity = 0;
   private BME280 sensor;
   private ServiceFeatureTable reportTable;
+  private Context context;
 
   /**
    * Initializes the application on start up
@@ -133,11 +134,7 @@ public class Controller implements Initializable {
     // instance of bme280 sensor (not used in simulation mode)
     if (!simulatedMode) {
       System.out.println("connecting to sensor");
-      Context context = Pi4J.newAutoContext();
-
-      sensor = BME280Builder.get()
-        .context(context)
-        .build();
+      context = Pi4J.newAutoContext();
     }
 
     // timer for reading sensor and logging results
@@ -145,6 +142,10 @@ public class Controller implements Initializable {
     recordingTimer.schedule(new TimerTask() {
       public void run() {
         System.out.println("logging");
+
+        sensor = BME280Builder.get()
+            .context(context)
+            .build();
 
         // is it a simulated feed?
         if (simulatedMode) {
@@ -160,7 +161,11 @@ public class Controller implements Initializable {
           currentHumidity = sensor.getRelativeHumidity();
 
           // reset the sensor after each read to prevent i2c locking
-          sensor.reset();
+          try {
+            sensor.close();
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
         }
 
         // update the display on JavaFX thread
