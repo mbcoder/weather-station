@@ -16,6 +16,9 @@
 
 package com.mbcoder.iot.weatherstation;
 
+import com.esri.arcgisruntime.data.Feature;
+import com.esri.arcgisruntime.data.ServiceFeatureTable;
+import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 
@@ -25,6 +28,10 @@ import eu.hansolo.medusa.GaugeBuilder;
 import eu.hansolo.medusa.GaugeDesign;
 import eu.hansolo.medusa.SectionBuilder;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -45,35 +52,86 @@ public class Controller implements Initializable {
 
   @FXML VBox vBox;
   private static final DecimalFormat formatter = new DecimalFormat("0.00");
-  private String weatherStationID = ""; // this is the unique weather station id
-
+  private UUID weatherStationID = UUID.fromString("db12edca-7d28-45e6-84a3-9484c6e50d12"); // GlobalID of weather station for this unit
   @FXML private Gauge humidityGauge;
   @FXML private Gauge digitalTempGauge;
   @FXML private Gauge barometerGauge;
-  private Timer loggingTimer;
-
+  private Timer recordingTimer; // timer for reading from the sensors
+  private Timer loggingTimer; // timer for logging data to the feature service
   private boolean simulatedMode = false;
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
   private BME280 sensor;
+  private ServiceFeatureTable reportTable;
 
+  /**
+   * Initializes the application on start up
+   * <p>
+   * @param url
+   * The location used to resolve relative paths for the root object, or
+   * {@code null} if the location is not known.
+   *
+   * @param resourceBundle
+   * The resources used to localize the root object, or {@code null} if
+   * the root object was not localized.
+   */
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    weatherStationID = "RaspPi";
 
     // set up the UI
     buildAndDisplayBarometerGauge();
-    // read data
-    startWeatherLogging();
 
+    // read data from the sensor
+    startWeatherRecording();
+
+    // log data into feature service
+    startWeatherLogging();
   }
 
   /**
-   * Starts logging data coming from either a simulated source, or the Raspberry Pi.
+   * Logs data read from the weather sensor into the feature service
+   */
+  private void startWeatherLogging() {
+    // Connect to the service feature table for logging data on public service
+    reportTable = new ServiceFeatureTable("https://services1.arcgis.com/6677msI40mnLuuLr/ArcGIS/rest/services/Weather/FeatureServer/1");
+    reportTable.loadAsync();
+    reportTable.addDoneLoadingListener(()-> {
+      System.out.println("table load status" + reportTable.getLoadStatus());
+
+      if (reportTable.getLoadStatus() == LoadStatus.LOADED) {
+        // start timer for logging weather readings to feature service
+        loggingTimer = new Timer();
+        loggingTimer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            System.out.println("logging to feature service");
+
+            // create attributes for the weather report
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("WeatherStationID", weatherStationID);
+            attributes.put("ReportTime", Calendar.getInstance());
+            attributes.put("Temperature", currentTemperature);
+            attributes.put("Pressure", currentPressureMb);
+            attributes.put("Humidity", currentHumidity);
+
+            // create the feature
+            Feature reportFeature = reportTable.createFeature(attributes, null);
+
+            // add the feature to the table and apply edits to the feature service
+            var addFuture = reportTable.addFeatureAsync(reportFeature);
+            addFuture.addDoneListener(reportTable::applyEditsAsync);
+          }
+        }, 10000,60000);
+      }
+    });
+  }
+
+  /**
+   * Starts recording data coming from either a simulated source, or the Raspberry Pi.
    */
   @FXML
-  private void startWeatherLogging() {
+  private void startWeatherRecording() {
     // instance of bme280 sensor (not used in simulation mode)
     if (!simulatedMode) {
       System.out.println("connecting to sensor");
@@ -85,11 +143,8 @@ public class Controller implements Initializable {
     }
 
     // timer for reading sensor and logging results
-    loggingTimer = new Timer();
-
-    // 10000; // time between sensor samples in milliseconds
-    int sampleFrequency = 30000;
-    loggingTimer.schedule(new TimerTask() {
+    recordingTimer = new Timer();
+    recordingTimer.schedule(new TimerTask() {
       public void run() {
         System.out.println("logging");
 
@@ -108,19 +163,17 @@ public class Controller implements Initializable {
 
           // reset the sensor after each read to prevent i2c locking
           sensor.reset();
-
-          System.out.println("temp:" + currentTemperature + " pressure:" + currentPressureMb + " humidity:" + currentHumidity);
         }
 
         // update the display on JavaFX thread
         Platform.runLater(() -> updateDisplay(currentTemperature, currentPressureMb, currentHumidity));
       }
-    }, 1000, sampleFrequency);
+    }, 1000, 30000);
   }
 
   /**
    * Updates the display with temperature, pressure and humidity readings.
-   *
+   * <p>
    * @param temperature temperature in ºC
    * @param pressure    pressure in mB
    * @param humidity    humidity in %
@@ -208,7 +261,8 @@ public class Controller implements Initializable {
    * Stops and releases all resources used in application.
    */
   void terminate() {
-    if (loggingTimer != null) loggingTimer.cancel(); // stop timer so the app closes cleanly
+    if (recordingTimer != null) recordingTimer.cancel(); // stop recording timer so the app closes cleanly
+    if (loggingTimer != null) loggingTimer.cancel(); // also stop the logging timer
     if (sensor != null) {
       try {
         sensor.close();
