@@ -162,7 +162,9 @@ public class Controller implements Initializable {
 
           // reset the sensor after each read to prevent i2c locking
           try {
+            sensor.reset();
             sensor.close();
+
           } catch (Exception e) {
             throw new RuntimeException(e);
           }
