@@ -135,6 +135,10 @@ public class Controller implements Initializable {
     if (!simulatedMode) {
       System.out.println("connecting to sensor");
       context = Pi4J.newAutoContext();
+
+      sensor = BME280Builder.get()
+          .context(context)
+          .build();
     }
 
     // timer for reading sensor and logging results
@@ -142,10 +146,6 @@ public class Controller implements Initializable {
     recordingTimer.schedule(new TimerTask() {
       public void run() {
         System.out.println("logging");
-
-        sensor = BME280Builder.get()
-            .context(context)
-            .build();
 
         // is it a simulated feed?
         if (simulatedMode) {
