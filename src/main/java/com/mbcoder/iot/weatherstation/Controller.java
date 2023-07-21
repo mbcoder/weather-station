@@ -173,7 +173,7 @@ public class Controller implements Initializable {
         // update the display on JavaFX thread
         Platform.runLater(() -> updateDisplay(currentTemperature, currentPressureMb, currentHumidity));
       }
-    }, 1000, 30000);
+    }, 1000, 120000); // read sensor every 2 minutes
   }
 
   /**
