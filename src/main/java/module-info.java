@@ -32,7 +32,8 @@ module com.mbcoder.iot.weatherstation {
   requires com.pi4j.plugin.pigpio;
   requires com.pi4j.plugin.linuxfs;
   requires jdk.unsupported;
-  requires rpi.drivers;
+  requires org.slf4j;
+  //requires rpi.drivers;
 
   exports com.mbcoder.iot.weatherstation;
 }

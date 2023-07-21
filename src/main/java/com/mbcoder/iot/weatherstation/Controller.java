@@ -163,7 +163,7 @@ public class Controller implements Initializable {
           // reset the sensor after each read to prevent i2c locking
           try {
             sensor.reset();
-            sensor.close();
+            //sensor.close();
 
           } catch (Exception e) {
             throw new RuntimeException(e);
@@ -270,7 +270,7 @@ public class Controller implements Initializable {
     if (loggingTimer != null) loggingTimer.cancel(); // also stop the logging timer
     if (sensor != null) {
       try {
-        sensor.close();
+        //sensor.close();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
