@@ -24,13 +24,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * An application for logging weather readings to a feature service
+ */
 public class Weather_logger extends Application {
 
   private static Controller controller;
 
   @Override
   public void start(Stage stage) throws IOException {
-
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
     Parent root = loader.load();
     controller = loader.getController();
@@ -42,7 +44,6 @@ public class Weather_logger extends Application {
     stage.setHeight(500);
     stage.setScene(scene);
     stage.show();
-
   }
 
   /**
@@ -59,8 +60,6 @@ public class Weather_logger extends Application {
    */
   @Override
   public void stop() {
-
     controller.terminate();
-
   }
 }

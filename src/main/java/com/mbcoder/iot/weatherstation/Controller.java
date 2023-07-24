@@ -49,7 +49,6 @@ import one.microproject.rpi.hardware.gpio.sensors.BME280Builder;
 public class Controller implements Initializable {
 
   @FXML VBox vBox;
-  //private static final DecimalFormat formatter = new DecimalFormat("0.00");
   private final UUID weatherStationID = UUID.fromString("db12edca-7d28-45e6-84a3-9484c6e50d12"); // GlobalID of weather station for this unit
   @FXML private Gauge humidityGauge;
   @FXML private Gauge digitalTempGauge;
@@ -96,8 +95,6 @@ public class Controller implements Initializable {
     reportTable = new ServiceFeatureTable("https://services1.arcgis.com/6677msI40mnLuuLr/ArcGIS/rest/services/Weather/FeatureServer/1");
     reportTable.loadAsync();
     reportTable.addDoneLoadingListener(()-> {
-      System.out.println("table load status" + reportTable.getLoadStatus());
-
       if (reportTable.getLoadStatus() == LoadStatus.LOADED) {
         // start timer for logging weather readings to feature service
         loggingTimer = new Timer();
@@ -135,7 +132,6 @@ public class Controller implements Initializable {
     if (!simulatedMode) {
       System.out.println("connecting to sensor");
       context = Pi4J.newAutoContext();
-
       sensor = BME280Builder.get()
           .context(context)
           .build();
@@ -145,8 +141,6 @@ public class Controller implements Initializable {
     recordingTimer = new Timer();
     recordingTimer.schedule(new TimerTask() {
       public void run() {
-        System.out.println("logging");
-
         // is it a simulated feed?
         if (simulatedMode) {
           // make up a random temperature and pressure
@@ -161,13 +155,7 @@ public class Controller implements Initializable {
           currentHumidity = sensor.getRelativeHumidity();
 
           // reset the sensor after each read to prevent i2c locking
-          try {
-            sensor.reset();
-            //sensor.close();
-
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
+          sensor.reset();
         }
 
         // update the display on JavaFX thread
@@ -259,7 +247,6 @@ public class Controller implements Initializable {
 
     FGauge barometerFGauge = new FGauge(barometerGauge, GaugeDesign.TILTED_BLACK, GaugeDesign.GaugeBackground.WHITE);
     vBox.getChildren().addAll(barometerFGauge);
-
   }
 
   /**
@@ -270,7 +257,7 @@ public class Controller implements Initializable {
     if (loggingTimer != null) loggingTimer.cancel(); // also stop the logging timer
     if (sensor != null) {
       try {
-        //sensor.close();
+        sensor.close();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
