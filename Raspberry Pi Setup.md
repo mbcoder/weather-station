@@ -19,6 +19,10 @@ Once the Raspberry Pi is up and running, then open up the Terminal and follow th
 
 - Create a `dev` directory in your home for working with git repositories with `mkdir dev`
 - Move into the dev directory with `cd dev`
+- Connect the weather sensor to your Raspberry Pi
+
+![wiring](weather-cables.png)
+
 - Clone the python library for reading the Pimoroni BME280 with `git clone https://github.com/pimoroni/bme280-python.git`
 - Follow the setup [instructions](https://github.com/pimoroni/bme280-python/tree/master#readme) for the BME280 library
 - You can now test that your BME280 sensor is working using the `all_values.py` script as shown below:
