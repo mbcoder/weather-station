@@ -144,7 +144,7 @@ public class Controller implements Initializable {
         // is it a simulated feed?
         if (simulatedMode) {
           // make up a random temperature and pressure
-          Random random = new Random();
+          var random = new Random();
           currentTemperature = (random.nextDouble() * 10) + 10;
           currentPressureMb = 990 + random.nextDouble() * 15;
           currentHumidity = 60 + random.nextDouble() * 15;
