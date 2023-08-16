@@ -77,7 +77,7 @@ public class Controller implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
-    // set up the UI
+    // set up the UI for the barometer gauge
     buildAndDisplayBarometerGauge();
 
     // read data from the sensor
