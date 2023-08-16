@@ -42,7 +42,7 @@ dependencies {
     implementation 'com.pi4j:pi4j-plugin-pigpio:2.3.0'
     implementation 'com.pi4j:pi4j-plugin-linuxfs:2.3.0'
     implementation 'one.microproject.rpi:rpi-drivers:2.1.1'
-    implementation 'eu.hansolo:medusa:16.0.1'
+    implementation 'eu.hansolo:medusa:17.1.7'
 
 }
 
