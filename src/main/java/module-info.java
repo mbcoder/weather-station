@@ -21,7 +21,10 @@ module com.mbcoder.iot.weatherstation {
   requires org.slf4j.nop;
   requires javafx.fxml;
   requires java.xml;
+  requires javafx.swing;
 
+  requires transitive eu.hansolo.toolboxfx;
+  requires transitive eu.hansolo.toolbox;
   requires eu.hansolo.medusa;
 
   // make all @FXML annotated objects reflectively accessible to the javafx.fxml module

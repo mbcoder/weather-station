@@ -42,13 +42,14 @@ dependencies {
     implementation 'com.pi4j:pi4j-plugin-pigpio:2.3.0'
     implementation 'com.pi4j:pi4j-plugin-linuxfs:2.3.0'
     implementation 'one.microproject.rpi:rpi-drivers:2.1.1'
-    //implementation 'eu.hansolo:medusa:17.1.7'
-    implementation 'eu.hansolo:medusa:16.0.1'
+    implementation 'eu.hansolo:medusa:17.1.7'
+    implementation 'eu.hansolo:toolboxfx:17.0.41'
+    implementation 'eu.hansolo:toolbox:17.0.41'
 }
 
 javafx {
     version = "17.0.7"
-    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.web', 'javafx.media' ]
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.swing' ]
 }
 
 application {
