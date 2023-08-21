@@ -55,7 +55,7 @@ public class Controller implements Initializable {
   @FXML private Gauge barometerGauge;
   private Timer recordingTimer; // timer for reading from the sensors
   private Timer loggingTimer; // timer for logging data to the feature service
-  private final boolean simulatedMode = false;
+  private final boolean simulatedMode = false; // if true, this allows you to run and app away from a Raspberry Pi.  It generates random readings in this mode.
   private double currentTemperature = 0;
   private double currentPressureMb = 0;
   private double currentHumidity = 0;
