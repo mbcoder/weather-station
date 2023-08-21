@@ -14,7 +14,7 @@ The project includes the Gradle wrapper, so there is no need to install Gradle t
 
 ## Instructions
 
-1. Set up your Raspberry Pi by following the [instructions](Raspberry%20Pi%20Setup.md) in this page.
+1. Set up your Raspberry Pi by following the [set up instructions](Raspberry%20Pi%20Setup.md) in this repo.
 2. Create a dev directory in your home directory using the command line: mkdir dev
 3. Open the directory by entering `cd dev`
 4. Clone the repository by entering `git clone https://github.com/mbcoder/weather-station.git`
