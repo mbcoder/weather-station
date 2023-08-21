@@ -20,14 +20,12 @@ plugins {
 }
 
 ext {
-    arcgisVersion = '200.1.0'
+    arcgisVersion = '200.1.0-3734'
 }
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://esri.jfrog.io/artifactory/arcgis'
-    }
+    mavenLocal()
 }
 
 configurations {
@@ -38,18 +36,25 @@ dependencies {
     implementation "com.esri.arcgisruntime:arcgis-java:$arcgisVersion"
     natives "com.esri.arcgisruntime:arcgis-java-jnilibs:$arcgisVersion"
     natives "com.esri.arcgisruntime:arcgis-java-resources:$arcgisVersion"
-    // handle SLF4J http://www.slf4j.org/codes.html#StaticLoggerBinder using a no-operation logger
     implementation "org.slf4j:slf4j-nop:2.0.5"
+    implementation 'com.pi4j:pi4j-core:2.3.0'
+    implementation 'com.pi4j:pi4j-plugin-raspberrypi:2.3.0'
+    implementation 'com.pi4j:pi4j-plugin-pigpio:2.3.0'
+    implementation 'com.pi4j:pi4j-plugin-linuxfs:2.3.0'
+    implementation 'one.microproject.rpi:rpi-drivers:2.1.1'
+    implementation 'eu.hansolo:medusa:17.1.7'
+    implementation 'eu.hansolo:toolboxfx:17.0.41'
+    implementation 'eu.hansolo:toolbox:17.0.41'
 }
 
 javafx {
-    version = "17.0.2"
-    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.web', 'javafx.media' ]
+    version = "17.0.7"
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.swing' ]
 }
 
 application {
-    mainModule = "com.mycompany.app"
-    mainClass = "com.mycompany.app.App"
+    mainModule = "com.mbcoder.iot.weatherstation"
+    mainClass = "com.mbcoder.iot.weatherstation.Weather_logger"
 }
 
 task copyNatives(type: Copy) {

@@ -14,11 +14,29 @@
  * limitations under the License.
  */
 
-module com.mycompany.app {
+module com.mbcoder.iot.weatherstation {
   // modules required by the app
   requires com.esri.arcgisruntime;
   requires javafx.graphics;
   requires org.slf4j.nop;
+  requires javafx.fxml;
+  requires java.xml;
+  requires javafx.swing;
 
-  exports com.mycompany.app;
+  requires transitive eu.hansolo.toolboxfx;
+  requires transitive eu.hansolo.toolbox;
+  requires eu.hansolo.medusa;
+
+  // make all @FXML annotated objects reflectively accessible to the javafx.fxml module
+  opens com.mbcoder.iot.weatherstation to javafx.fxml;
+
+  // Pi4J MODULES
+  requires com.pi4j;
+  requires com.pi4j.plugin.pigpio;
+  requires com.pi4j.plugin.linuxfs;
+  requires jdk.unsupported;
+  requires org.slf4j;
+  requires rpi.drivers;
+
+  exports com.mbcoder.iot.weatherstation;
 }
