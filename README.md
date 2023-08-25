@@ -1,6 +1,6 @@
 # Weather station project
 
-This project is a demonstration of an IoT weather station logger which integrates into the [ArcGIS platform](https://www.esri.com/en-us/arcgis/products/arcgis-platform/overview). It was featured in this [blog post](https://www.esri.com/arcgis-blog/developers/) which gives more details of the developer technology used for this project.
+This project is a demonstration of an IoT weather station logger which integrates into the [ArcGIS platform](https://www.esri.com/en-us/arcgis/products/arcgis-platform/overview). It was featured in this [blog post](https://www.esri.com/arcgis-blog/products/sdk-java/developers/java-maps-sdk-raspberry-pi-weather-station) which gives more details of the developer technology used for this project.
 
 It has been designed to work on a Raspberry Pi Model 3B+ (or higher model) with a USB GPS receiver.
 
