@@ -2,13 +2,15 @@
 
 This project is a demonstration of an IoT weather station logger which integrates into the [ArcGIS platform](https://www.esri.com/en-us/arcgis/products/arcgis-platform/overview). It was featured in this [blog post](https://www.esri.com/arcgis-blog/products/sdk-java/developers/java-maps-sdk-raspberry-pi-weather-station) which gives more details of the developer technology used for this project.
 
-It has been designed to work on a Raspberry Pi Model 3B+ (or higher model) with a USB GPS receiver.
+It has been designed to work on a Raspberry Pi Model 3B+ (or higher model).
 
 The project uses an early adopter version of the [ArcGIS Maps SDK for Java ](https://community.esri.com/t5/arcgis-maps-sdks-native-blog/arcgis-maps-sdk-for-java-with-support-for-arm64/ba-p/1304914)specifically compiled to work with Arm Linux platforms such as the Raspberry Pi or Jenson Orin units. 
 
 The Java Maps SDK with support for Arm Linux can be requested by emailing ARM64LinuxNative@esri.com. This will install the libraries needed for this app in a Maven Local instance. This is a temporary way of getting the SDK whilst it is in Beta. Subsequent releases will be available in a public maven repository.
 
 ![user interface](weather-gui.png)
+
+Check out this [blog](https://dev.to/rachaele/how-to-use-the-javafx-library-medusa-to-display-weather-data-10a9) post which talks about how the UI was created for this app.
 
 The project includes the Gradle wrapper, so there is no need to install Gradle to run the app.
 
